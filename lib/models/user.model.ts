@@ -17,7 +17,7 @@ export interface IUserFilterModel {
     active?: boolean;
     role?: {
         eq?: Role;
-        in: Role[];
+        in?: Role[];
     };
     gender?: Gender | null;
     birthday?: ICompareModel;
@@ -27,7 +27,6 @@ export interface IUserFilterModel {
     updatedAt?: ICompareModel;
     lastLogin?: ICompareModel;
     groups?: string[];
-    _id?: string;
 }
 
 export interface ICreateUserModel {
