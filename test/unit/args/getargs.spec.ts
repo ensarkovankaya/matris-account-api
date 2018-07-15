@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { validateOrReject } from 'class-validator';
 import { describe, it } from 'mocha';
 import { GetArgs } from '../../../lib/grapgql/args/get.args';
 
@@ -13,21 +12,17 @@ describe('GetArgs', () => {
         expect(args).to.be.deep.eq({id: '1'.repeat(24)});
     });
     it('should validate id', async () => {
-        const args = new GetArgs({id: '1'.repeat(24)});
-        await validateOrReject(args, {skipMissingProperties: true});
+        await new GetArgs({id: '1'.repeat(24)}).validate();
     });
     it('should validate email', async () => {
-        const args = new GetArgs({email: 'email@mail.com'});
-        await validateOrReject(args, {skipMissingProperties: true});
+        await new GetArgs({email: 'email@mail.com'}).validate();
     });
     it('should validate username', async () => {
-        const args = new GetArgs({username: 'username'});
-        await validateOrReject(args, {skipMissingProperties: true});
+        await new GetArgs({username: 'username'}).validate();
     });
     it('should raise validation error for email', async () => {
-        const args = new GetArgs({email: 'notamail'});
         try {
-            await validateOrReject(args, {skipMissingProperties: true});
+            await new GetArgs({email: 'notamail'}).validate();
             throw new Error();
         } catch (e) {
             expect(e).to.be.an('array');
@@ -37,7 +32,7 @@ describe('GetArgs', () => {
     });
     it('should raise validation error for id', async () => {
         try {
-            await validateOrReject(new GetArgs({id: 'shortid'}), {skipMissingProperties: true});
+            await new GetArgs({id: 'shortid'}).validate();
             throw new Error();
         } catch (e) {
             expect(e).to.be.an('array');
@@ -46,7 +41,7 @@ describe('GetArgs', () => {
         }
 
         try {
-            await validateOrReject(new GetArgs({id: 'longid'.repeat(10)}), {skipMissingProperties: true});
+            await new GetArgs({id: 'longid'.repeat(10)}).validate();
             throw new Error();
         } catch (e) {
             expect(e).to.be.an('array');
