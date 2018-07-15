@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { UserFieldRequired, UserInvalid } from '../../lib/error';
-import { User } from '../../lib/models/user';
-import { Gender, Role } from '../../lib/models/user.model';
+import { UserFieldRequired, UserInvalid } from '../../../lib/error';
+import { User } from '../../../lib/models/user';
+import { Gender, Role } from '../../../lib/models/user.model';
 
 class ShouldNotSucceed extends Error {
     public name = 'ShouldNotSucceed';
