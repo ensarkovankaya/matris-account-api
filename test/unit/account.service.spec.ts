@@ -9,7 +9,7 @@ class ShouldNotSucceed extends Error {
     public name = 'ShouldNotSucceed';
 }
 
-describe('AccountService', () => {
+describe('AccountService Unit Tests', () => {
     describe('GET', () => {
         it('should raise ArgumentRequired', async () => {
             const client = new MockGraphQLClient('', {});

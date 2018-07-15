@@ -9,7 +9,7 @@ class ShouldNotSucceed extends Error {
     public message = 'This test should not be succeed';
 }
 
-describe('User', () => {
+describe('User Schema Tests', () => {
     it('should raise UserFieldRequired when empty init', async () => {
         try {
             await User({});
