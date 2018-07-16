@@ -1,10 +1,10 @@
 import { IsAlphanumeric, IsEmail, IsLowercase, IsString, Length } from 'class-validator';
+import { IGetArgs } from '../models/args.model';
 import { BaseArg } from './base.arg';
-import { IGetArgs } from './get.args.model';
 
 export class GetArgs extends BaseArg implements IGetArgs {
     @IsString()
-    @Length(24, 24)
+    @Length(24, 24, {message: 'id must be equal to 24 characters'})
     public id?: string;
 
     @Length(4, 32, {message: 'InvalidLength'})

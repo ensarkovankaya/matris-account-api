@@ -7,6 +7,11 @@ export class BaseArg {
     }
 
     public async validate(overwrites: object = {}) {
-        await validateOrReject(this, {skipMissingProperties: true, ...overwrites});
+        await validateOrReject(this, {
+            skipMissingProperties: true,
+            forbidNonWhitelisted: true,
+            forbidUnknownValues: true,
+            ...overwrites
+        });
     }
 }

@@ -1,4 +1,4 @@
-import { ICompareModel } from './compare.model';
+import { ICompareModel, INullableCompareModel } from './compare.model';
 
 export enum Role {
     ADMIN = 'ADMIN',
@@ -20,12 +20,12 @@ export interface IUserFilterModel {
         in?: Role[];
     };
     gender?: Gender | null;
-    birthday?: ICompareModel;
+    birthday?: INullableCompareModel;
     deleted?: boolean;
-    deletedAt?: ICompareModel;
+    deletedAt?: INullableCompareModel;
     createdAt?: ICompareModel;
     updatedAt?: ICompareModel;
-    lastLogin?: ICompareModel;
+    lastLogin?: INullableCompareModel;
     groups?: string[];
 }
 
