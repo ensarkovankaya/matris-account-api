@@ -48,3 +48,11 @@ export class UserInvalid extends Error {
         super();
     }
 }
+
+export class NotUserField extends Error {
+    public name = 'NotUserField';
+
+    constructor(field?: string) {
+        super(field ? `Field '${field}' not a known user field.` : `Given field not a known user field.`);
+    }
+}
