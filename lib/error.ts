@@ -56,3 +56,11 @@ export class NotUserField extends Error {
         super(field ? `Field '${field}' not a known user field.` : `Given field not a known user field.`);
     }
 }
+
+export class UnexpectedResponse extends Error {
+    public name = 'UnexpectedResponse';
+
+    constructor() {
+        super('API returned an unexpected response.');
+    }
+}

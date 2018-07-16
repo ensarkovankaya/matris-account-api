@@ -1,7 +1,7 @@
 import { GraphQLClient } from 'graphql-request';
 import { Options } from 'graphql-request/dist/src/types';
 import { BaseService } from './base.service';
-import { ArgumentRequired, NotUserField, UserFieldRequired } from './error';
+import { ArgumentRequired, NotUserField, UnexpectedResponse, UserFieldRequired } from './error';
 import { FindArgs } from './grapgql/args/find.args';
 import { GetArgs } from './grapgql/args/get.args';
 import { IGetArgs } from './grapgql/models/args.model';
@@ -60,6 +60,9 @@ export class AccountService extends BaseService {
             const response = await this.call<{ user: Partial<IUserModel> | null }>(query, by);
             this.debug('Get', {response});
             response.raise();
+            if (response.data === undefined || response.data.user === undefined) {
+                throw new UnexpectedResponse();
+            }
             return response.data.user ? await User(response.data.user) : null;
         } catch (err) {
             this.error('Get', err);
@@ -95,6 +98,9 @@ export class AccountService extends BaseService {
             const response = await this.call<{ users: Array<Partial<IUserModel>> }>(query, filter);
             this.debug('Find', {response});
             response.raise();
+            if (response.data === undefined || response.data.users === undefined) {
+                throw new UnexpectedResponse();
+            }
             return await Promise.all(response.data.users.map(u => User(u)));
         } catch (e) {
             this.error('Find', e);
