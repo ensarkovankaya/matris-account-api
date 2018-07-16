@@ -92,7 +92,7 @@ describe('AccountService Unit Tests', () => {
             try {
                 const client = new MockGraphQLClient('', {});
                 const service = new AccountService({url: '', client});
-                await service.find({}, []);
+                await service.search({}, []);
                 throw new ShouldNotSucceed();
             } catch (e) {
                 expect(e.name).to.be.eq('UserFieldRequired');

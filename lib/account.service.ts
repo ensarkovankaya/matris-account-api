@@ -36,6 +36,12 @@ export class AccountService extends BaseService {
         this.overwrites = options.overwrites;
     }
 
+    /**
+     * Get specific user by id, email or username.
+     * @param {IGetArgs} by
+     * @param {UserField[]} fields
+     * @return {Promise<UserSchema | null>}
+     */
     public async get(by: IGetArgs, fields: UserField[] = userFields): Promise<UserSchema | null> {
         this.debug('Get', {by, fields});
 
@@ -45,6 +51,8 @@ export class AccountService extends BaseService {
 
         // Validate arguments
         await new GetArgs(by).validate();
+
+        // Get Fragment
         const fragment = this.buildUserFieldFragment(fields);
         try {
             const query = 'query getUser($id: String, $email: String, $username: String)' +
@@ -59,10 +67,19 @@ export class AccountService extends BaseService {
         }
     }
 
-    public async find(filter: IUserFilterModel = {}, fields: UserField[] = userFields): Promise<UserSchema[]> {
+    /**
+     * Search users with given filters
+     * @param {IUserFilterModel} filter
+     * @param {UserField[]} fields
+     * @return {Promise<UserSchema[]>}
+     */
+    public async search(filter: IUserFilterModel = {}, fields: UserField[] = userFields): Promise<UserSchema[]> {
         try {
-            this.debug('Find');
+            this.debug('Find', {filter, fields});
+            // Validate arguments
             await new FindArgs(filter).validate();
+
+            // Get Fragment
             const fragment = this.buildUserFieldFragment(fields);
             const query = `query findUsers($active:Boolean, $gender: Gender, $role: RoleQuery, $deleted: Boolean,
                                             $deletedAt: CompareDateInput, $createdAt: CompareDateInput,
@@ -85,6 +102,11 @@ export class AccountService extends BaseService {
         }
     }
 
+    /**
+     * Builds fragment for User
+     * @param {UserField[]} fields
+     * @return {string}
+     */
     public buildUserFieldFragment(fields: UserField[]): string {
         this.debug('BuildUserFieldFragment', {fields});
         if (fields.length === 0) {
