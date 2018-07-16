@@ -6,7 +6,6 @@ describe('UserGenerator', () => {
     it('should get one valid user', () => {
         const generator = new UserGenerator();
         const user = generator.get();
-        console.log('User:', user);
         expect(user).to.be.an('object');
         expect(user._id).to.be.a('string');
         expect(user.username).to.be.a('string');
@@ -33,7 +32,6 @@ describe('UserGenerator', () => {
     it('should get one valid user with filter', () => {
         const generator = new UserGenerator();
         const user = generator.get({role: 'ADMIN', gender: 'MALE'});
-        console.log('User:', user);
         expect(user).to.be.an('object');
         expect(user._id).to.be.a('string');
         expect(user.username).to.be.a('string');
