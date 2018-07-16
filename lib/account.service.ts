@@ -1,13 +1,14 @@
 import { GraphQLClient } from 'graphql-request';
 import { Options } from 'graphql-request/dist/src/types';
 import { BaseService } from './base.service';
-import { ArgumentRequired, UserFieldRequired } from './error';
+import { ArgumentRequired, NotUserField, UserFieldRequired } from './error';
+import { FindArgs } from './grapgql/args/find.args';
 import { GetArgs } from './grapgql/args/get.args';
-import { IGetArgs } from './grapgql/args/get.args.model';
+import { IGetArgs } from './grapgql/models/args.model';
 import { IClientModel } from './models/client.model';
 import { ILoggerModel } from './models/logger.model';
 import { User, UserSchema } from './models/user';
-import { IUserModel, UserField } from './models/user.model';
+import { IUserFilterModel, IUserModel, UserField, userFields } from './models/user.model';
 
 export interface IServiceOptions {
     url: string;
@@ -35,25 +36,19 @@ export class AccountService extends BaseService {
         this.overwrites = options.overwrites;
     }
 
-    public async get(by: IGetArgs, fields: UserField[]): Promise<UserSchema | null> {
+    public async get(by: IGetArgs, fields: UserField[] = userFields): Promise<UserSchema | null> {
         this.debug('Get', {by, fields});
 
         if (!by.id && !by.email && !by.username) {
             throw new ArgumentRequired(['id', 'email', 'username']);
         }
-        if (fields.length === 0) {
-            throw new UserFieldRequired();
-        }
 
         // Validate arguments
         await new GetArgs(by).validate();
-
+        const fragment = this.buildUserFieldFragment(fields);
         try {
-            const query = `query getUser($id: String, $email: String, $username: String) {
-                    user: get(id: $id, email: $email, username: $username) {
-                        ${fields.join(',')}
-                    }
-            }`;
+            const query = 'query getUser($id: String, $email: String, $username: String)' +
+                `{user: get(id: $id, email: $email, username: $username) {...UserFields } }\n${fragment}`;
             const response = await this.call<{ user: Partial<IUserModel> | null }>(query, by);
             this.debug('Get', {response});
             response.raise();
@@ -64,12 +59,42 @@ export class AccountService extends BaseService {
         }
     }
 
-    public async find(filter) {
+    public async find(filter: IUserFilterModel = {}, fields: UserField[] = userFields): Promise<UserSchema[]> {
         try {
             this.debug('Find');
+            await new FindArgs(filter).validate();
+            const fragment = this.buildUserFieldFragment(fields);
+            const query = `query findUsers($active:Boolean, $gender: Gender, $role: RoleQuery, $deleted: Boolean,
+                                            $deletedAt: CompareDateInput, $createdAt: CompareDateInput,
+                                            $updatedAt: CompareDateInput, $lastLogin: CompareDateInput,
+                                            $birthday: CompareDateInput) {
+                              find(active: $active, gender: $gender, role: $role, deleted: $deleted,
+                                  deletedAt: $deletedAt, createdAt: $createdAt, updatedAt: $updatedAt,
+                                  lastLogin: $lastLogin, birthday: $birthday) {
+                                    ...UserFields
+                              }
+                            }
+                            ${fragment}`;
+            const response = await this.call<{ users: Array<Partial<IUserModel>> }>(query, filter);
+            this.debug('Find', {response});
+            response.raise();
+            return await Promise.all(response.data.users.map(u => User(u)));
         } catch (e) {
             this.error('Find', e);
             throw e;
         }
+    }
+
+    public buildUserFieldFragment(fields: UserField[]): string {
+        this.debug('BuildUserFieldFragment', {fields});
+        if (fields.length === 0) {
+            throw new UserFieldRequired();
+        }
+        fields.forEach(field => {
+            if (!userFields.find(f => f === field)) {
+                throw new NotUserField(field);
+            }
+        });
+        return `fragment UserFields on User {\n\t${fields.join(',\n\t')}\n\t}`;
     }
 }
