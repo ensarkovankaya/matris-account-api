@@ -1,17 +1,21 @@
 {
   "name": "matris-account-api",
   "version": "1.0.0",
-  "description": "Account API for Matris project",
-  "main": "index.js",
+  "description": "Library for Account endpoint.",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "mocha -b -r ts-node/register test/**/*.spec.ts test/**/**/*.spec.ts test/**/**/**/*.spec.ts",
-    "e2e": "mocha -b -r ts-node/register test/e2e.ts",
+    "test": "mocha -b -r ts-node/register test/unit/**/*.spec.ts test/unit/**/**/*.spec.ts",
+    "test:data": "mocha -b -r ts-node/register test/data/**/*.spec.ts",
     "check": "tslint -p tslint.json",
     "build": "npm run check && tsc",
     "build:clean": "rm -rf ./dist/* && npm run build"
   },
   "author": "Ensar Kovankaya <ensar@kovankaya.com> (http://kovankaya.com)",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ensarkovankaya/matris-account-api.git"
+  },
   "dependencies": {
     "class-validator": "^0.8.5",
     "graphql-request": "^1.6.0"
