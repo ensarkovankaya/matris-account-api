@@ -6,10 +6,10 @@ if [ ! -d "node_modules" ]; then
     npm install
 fi
 
-if [ "$1" == "e2e" ]; then
-    # Run e2e tests
-    npm run e2e
-else
-    # Run unit tests
+if [ "$1" == "test" ]; then
+    # Run tests
     npm run test
+else
+    # Enter console
+    /usr/bin/env bash
 fi
