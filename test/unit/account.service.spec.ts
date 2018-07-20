@@ -58,7 +58,7 @@ describe('AccountService Unit Tests', () => {
         });
         it('should raise UserFieldRequired', async () => {
             const client = new MockGraphQLClient('', {});
-            const service = new AccountService({url: '', client, logger: console});
+            const service = new AccountService({url: '', client});
             try {
                 await service.get({id: '1'.repeat(24)}, []);
                 throw new ShouldNotSucceed();
