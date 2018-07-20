@@ -1,8 +1,11 @@
 import { IsArray, IsBoolean, IsIn, Length } from 'class-validator';
 import { IsCompareDateInput } from '../../decorators/is.compare.date.input';
-import { Gender, IUserFilterModel } from '../../models/user.model';
+import { IsGenderQuery } from '../../decorators/is.gender.query';
+import { IsRoleQuery } from '../../decorators/is.role.query';
+import { IUserFilterModel } from '../../models/user.filter.model';
 import { CompareDateInput, CompareNullableDateInput } from '../compare';
 import { BaseArg } from './base.arg';
+import { GenderQuery } from './gender.query';
 import { RoleQuery } from './role.query';
 
 export class FindArgs extends BaseArg implements IUserFilterModel {
@@ -15,12 +18,13 @@ export class FindArgs extends BaseArg implements IUserFilterModel {
     /**
      * Get users base on gender
      */
-    @IsIn([Gender.MALE, Gender.FEMALE, null])
-    public gender?: Gender | null;
+    @IsGenderQuery()
+    public gender?: GenderQuery;
 
     /**
      * Get users base on role
      */
+    @IsRoleQuery()
     public role?: RoleQuery;
 
     /**

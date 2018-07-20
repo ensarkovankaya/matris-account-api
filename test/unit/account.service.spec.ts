@@ -2,8 +2,9 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { AccountService } from '../../lib';
 import { UnexpectedResponse, UserFieldRequired } from '../../lib/error';
+import { Gender } from '../../lib/models/gender.model';
+import { Role } from '../../lib/models/role.model';
 import { UserSchema } from '../../lib/models/user';
-import { Gender, Role } from '../../lib/models/user.model';
 import { UserGenerator } from '../data/data';
 import { MockGraphQLClient } from './mock.client';
 
@@ -176,7 +177,7 @@ describe('AccountService Unit Tests', () => {
                 role: {
                     eq: Role.ADMIN,
                 },
-                gender: Gender.MALE,
+                gender: {eq: Gender.MALE},
                 birthday: {
                     gte: new Date('05/19/1994')
                 },

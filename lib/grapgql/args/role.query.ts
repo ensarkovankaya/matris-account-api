@@ -1,5 +1,5 @@
 import { IsIn } from 'class-validator';
-import { Role } from '../../models/user.model';
+import { Role } from '../../models/role.model';
 import { BaseArg } from './base.arg';
 
 export class RoleQuery extends BaseArg {

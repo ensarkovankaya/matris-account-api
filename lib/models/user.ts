@@ -4,20 +4,22 @@ import {
     IsBoolean,
     IsDate,
     IsEmail,
-    IsIn, IsLowercase, IsNotEmpty, IsNotIn,
+    IsIn, IsLowercase,
     IsString,
     Length, Matches,
     ValidateIf,
     validateOrReject
 } from 'class-validator';
 import { UserFieldRequired, UserInvalid } from '../error';
-import { Gender, IUserModel, Role, userFields } from './user.model';
+import { Gender } from './gender.model';
+import { Role } from './role.model';
+import { IUserModel, userFields } from './user.model';
 
 export class UserSchema implements Partial<IUserModel> {
     @Length(24, 24)
     public id?: string;
 
-    @Length(4, 32, {message: 'InvalidLength'})
+    @Length(4, 20, {message: 'InvalidLength'})
     @IsLowercase({message: 'NotLowercase'})
     @IsAlphanumeric({message: 'NotAlphanumeric'})
     public username?: string;
@@ -38,8 +40,8 @@ export class UserSchema implements Partial<IUserModel> {
     @IsIn([Role.ADMIN, Role.MANAGER, Role.INSTRUCTOR, Role.PARENT, Role.STUDENT])
     public role?: Role;
 
-    @IsIn([Gender.MALE, Gender.FEMALE, null])
-    public gender?: Gender | null;
+    @IsIn([Gender.MALE, Gender.FEMALE, Gender.UNKNOWN])
+    public gender?: Gender;
 
     @ValidateIf(((object, value) => value !== null))
     @IsDate()

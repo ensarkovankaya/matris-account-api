@@ -8,7 +8,8 @@ import { IGetArgs } from './grapgql/models/args.model';
 import { IClientModel } from './models/client.model';
 import { ILoggerModel } from './models/logger.model';
 import { User, UserSchema } from './models/user';
-import { IUserFilterModel, IUserModel, UserField, userFields } from './models/user.model';
+import { IUserFilterModel } from './models/user.filter.model';
+import { IUserModel, UserField, userFields } from './models/user.model';
 
 export interface IServiceOptions {
     url: string;
@@ -84,7 +85,7 @@ export class AccountService extends BaseService {
 
             // Get Fragment
             const fragment = this.buildUserFieldFragment(fields);
-            const query = `query findUsers($active:Boolean, $gender: Gender, $role: RoleQuery, $deleted: Boolean,
+            const query = `query findUsers($active:Boolean, $gender: GenderQuery, $role: RoleQuery, $deleted: Boolean,
                                             $deletedAt: CompareDateInput, $createdAt: CompareDateInput,
                                             $updatedAt: CompareDateInput, $lastLogin: CompareDateInput,
                                             $birthday: CompareDateInput) {

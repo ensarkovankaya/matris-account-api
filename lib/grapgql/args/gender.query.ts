@@ -1,0 +1,22 @@
+import { IsIn } from 'class-validator';
+import { Gender } from '../../models/gender.model';
+import { IGenderQueryModel } from '../../models/gender.query.model';
+import { BaseArg } from './base.arg';
+
+export class GenderQuery extends BaseArg implements IGenderQueryModel {
+    /**
+     * Get users role equal to given role
+     */
+    @IsIn([Gender.MALE, Gender.FEMALE, Gender.UNKNOWN], {message: 'Invalid'})
+    public eq?: Gender;
+
+    /**
+     * Get users one of given role.
+     */
+    @IsIn([Gender.MALE, Gender.FEMALE, Gender.UNKNOWN], {message: 'Invalid', each: true})
+    public in?: Gender[];
+
+    constructor(data: { eq?: Gender, in?: Gender[] } = {}) {
+        super(data);
+    }
+}

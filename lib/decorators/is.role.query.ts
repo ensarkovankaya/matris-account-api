@@ -1,32 +1,28 @@
-import { registerDecorator, ValidationArguments, ValidationOptions } from "class-validator";
-import { CompareDateInput } from '../grapgql/compare';
+import { registerDecorator, ValidationOptions } from "class-validator";
+import { RoleQuery } from '../grapgql/args/role.query';
 
 /**
- * Custom validator decorator for validating is input is type of DateCompareInput
+ * Checks is value type of RoleQuery
  * See: https://github.com/typestack/class-validator#custom-validation-decorators
- *
  * @param {ValidationOptions} validationOptions
  * @return {(object: object, propertyName: string) => void}
  * @constructor
  */
-export const IsCompareDateInput = (validationOptions?: ValidationOptions) => {
+export const IsRoleQuery = (validationOptions?: ValidationOptions) => {
     return (object: object, propertyName: string) => {
         registerDecorator({
-            name: "isCompareDateInput",
+            name: "isRoleQuery",
             target: object.constructor,
             propertyName,
             options: validationOptions,
             validator: {
                 validate: async (value: any) => {
                     try {
-                        await new CompareDateInput(value).validate();
+                        await new RoleQuery(value).validate();
                         return true;
                     } catch (e) {
                         return false;
                     }
-                },
-                defaultMessage: (validationArguments?: ValidationArguments) => {
-                    return 'Invalid Compare Date Input';
                 }
             }
         });

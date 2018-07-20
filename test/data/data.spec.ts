@@ -11,7 +11,7 @@ describe('UserGenerator', () => {
         expect(user.username).to.be.a('string');
         expect(user.email).to.be.a('string');
         expect(user.firstName).to.be.a('string');
-        expect(user.gender).to.be.oneOf(['MALE', 'FEMALE', null]);
+        expect(user.gender).to.be.oneOf(['MALE', 'FEMALE', 'UNKNOWN']);
         expect(user.role).to.be.oneOf(['ADMIN', 'MANAGER', 'INSTRUCTOR', 'PARENT', 'STUDENT']);
         expect(user.groups).to.be.an('array');
         expect(user.deleted).to.be.a('boolean');
