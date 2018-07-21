@@ -7,17 +7,17 @@ export class PaginationInput extends Validatable implements IPaginationOptions {
     @IsNumber()
     @Min(1)
     @Max(9999)
-    public page?: number = 1;
+    public page?: number;
 
     @IsNumber()
     @Min(0)
-    public offset?: number = 0;
+    public offset?: number;
 
     @IsNumber()
     @IsIn([10, 25, 50, 100, 150])
-    public limit?: 10 | 25 | 50 | 100 | 150 = 10;
+    public limit?: 10 | 25 | 50 | 100 | 150;
 
     constructor(data: IPaginationOptions = {}) {
-        super(data);
+        super({page: 1, offset: 0, limit: 10, ...data});
     }
 }
