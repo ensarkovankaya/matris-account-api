@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { GetArgs } from '../../../lib/grapgql/args/get.args';
+import { GetArgs } from '../../../../lib/grapgql/args/get.args';
 
 describe('GetArgs', () => {
     it('should init empty', () => {

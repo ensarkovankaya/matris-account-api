@@ -3,12 +3,12 @@ import { IsCompareDateInput } from '../../decorators/is.compare.date.input';
 import { IsGenderQuery } from '../../decorators/is.gender.query';
 import { IsRoleQuery } from '../../decorators/is.role.query';
 import { IUserFilterModel } from '../../models/user.filter.model';
+import { GenderQuery } from '../args/gender.query';
+import { RoleQuery } from '../args/role.query';
 import { CompareDateInput, CompareNullableDateInput } from '../compare';
-import { BaseArg } from './base.arg';
-import { GenderQuery } from './gender.query';
-import { RoleQuery } from './role.query';
+import { Validatable } from '../validatable';
 
-export class FilterArgs extends BaseArg implements IUserFilterModel {
+export class FilterInput extends Validatable implements IUserFilterModel {
     /**
      * Get users base on account status active
      */

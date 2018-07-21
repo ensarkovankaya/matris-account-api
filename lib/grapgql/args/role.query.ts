@@ -1,8 +1,8 @@
 import { IsIn } from 'class-validator';
 import { Role } from '../../models/role.model';
-import { BaseArg } from './base.arg';
+import { Validatable } from '../validatable';
 
-export class RoleQuery extends BaseArg {
+export class RoleQuery extends Validatable {
     /**
      * Get users role equal to given role
      */

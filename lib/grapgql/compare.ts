@@ -1,12 +1,12 @@
 import { IsDate, IsNumber } from 'class-validator';
-import { BaseArg } from './args/base.arg';
+import { Validatable } from './validatable';
 import { ICompareDateInput, ICompareNullableDateInput, ICompareNumberInput } from './models/compare.model';
 
 /**
  * Compare integer information for given field.
  * You can combine two field such as "gt" and "lt" to make range operations.
  */
-export class CompareNumberInput extends BaseArg implements ICompareNumberInput {
+export class CompareNumberInput extends Validatable implements ICompareNumberInput {
     /**
      * Equal to number.
      */
@@ -46,7 +46,7 @@ export class CompareNumberInput extends BaseArg implements ICompareNumberInput {
  * Compare date information for given field.
  * You can combine two field such as "gt" and "lt" to make range operations.
  */
-export class CompareDateInput extends BaseArg implements ICompareDateInput {
+export class CompareDateInput extends Validatable implements ICompareDateInput {
     /**
      * Equal to date
      */
@@ -86,7 +86,7 @@ export class CompareDateInput extends BaseArg implements ICompareDateInput {
  * Compare date information for given field.
  * You can combine two field such as "gt" and "lt" to make range operations.
  */
-export class CompareNullableDateInput extends BaseArg implements ICompareNullableDateInput {
+export class CompareNullableDateInput extends Validatable implements ICompareNullableDateInput {
     /**
      * Equal to date
      */

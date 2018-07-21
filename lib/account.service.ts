@@ -2,13 +2,13 @@ import { GraphQLClient } from 'graphql-request';
 import { Options } from 'graphql-request/dist/src/types';
 import { BaseService } from './base.service';
 import { ArgumentRequired, NotUserField, UnexpectedResponse, UserFieldRequired } from './error';
-import { FilterArgs } from './grapgql/args/filter.args';
 import { GetArgs } from './grapgql/args/get.args';
-import { PaginationArgs } from './grapgql/args/pagination.input';
+import { FilterInput } from './grapgql/inputs/filter.input';
+import { PaginationInput } from './grapgql/inputs/pagination.input';
 import { IGetArgs } from './grapgql/models/args.model';
 import { IClientModel } from './models/client.model';
 import { ILoggerModel } from './models/logger.model';
-import { IPaginateResult, IPaginationOptions } from './models/pagination.model';
+import { IPaginateResult, IPaginationOptions } from './grapgql/models/pagination.model';
 import { User, UserSchema } from './models/user';
 import { IUserFilterModel } from './models/user.filter.model';
 import { IUserModel, UserField, userFields } from './models/user.model';
@@ -90,8 +90,8 @@ export class AccountService extends BaseService {
                       pagination: IPaginationOptions): Promise<IPaginateResult<Partial<IUserModel>>> {
         this.debug('Find', {filter, fields, pagination});
         // Validate arguments
-        await new FilterArgs(filter).validate();
-        await new PaginationArgs(pagination).validate();
+        await new FilterInput(filter).validate();
+        await new PaginationInput(pagination).validate();
 
         // Get Fragment
         const fragment = this.buildUserFieldFragment(fields);

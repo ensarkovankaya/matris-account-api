@@ -1,6 +1,6 @@
 import { validateOrReject } from 'class-validator';
 
-export class BaseArg {
+export class Validatable {
 
     constructor(data: object = {}) {
         Object.keys(data).forEach(key => this[key] = data[key]);

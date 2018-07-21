@@ -1,9 +1,9 @@
 import { IsIn } from 'class-validator';
 import { Gender } from '../../models/gender.model';
 import { IGenderQueryModel } from '../../models/gender.query.model';
-import { BaseArg } from './base.arg';
+import { Validatable } from '../validatable';
 
-export class GenderQuery extends BaseArg implements IGenderQueryModel {
+export class GenderQuery extends Validatable implements IGenderQueryModel {
     /**
      * Get users role equal to given role
      */

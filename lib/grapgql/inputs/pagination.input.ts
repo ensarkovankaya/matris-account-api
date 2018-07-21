@@ -1,8 +1,8 @@
 import { IsIn, IsNumber, Max, Min } from "class-validator";
-import { IPaginationOptions } from '../../models/pagination.model';
-import { BaseArg } from './base.arg';
+import { IPaginationOptions } from '../models/pagination.model';
+import { Validatable } from '../validatable';
 
-export class PaginationArgs extends BaseArg implements IPaginationOptions {
+export class PaginationInput extends Validatable implements IPaginationOptions {
 
     @IsNumber()
     @Min(1)
