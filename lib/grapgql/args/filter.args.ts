@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsIn, Length } from 'class-validator';
+import { IsArray, IsBoolean, Length } from 'class-validator';
 import { IsCompareDateInput } from '../../decorators/is.compare.date.input';
 import { IsGenderQuery } from '../../decorators/is.gender.query';
 import { IsRoleQuery } from '../../decorators/is.role.query';
@@ -8,7 +8,7 @@ import { BaseArg } from './base.arg';
 import { GenderQuery } from './gender.query';
 import { RoleQuery } from './role.query';
 
-export class FindArgs extends BaseArg implements IUserFilterModel {
+export class FilterArgs extends BaseArg implements IUserFilterModel {
     /**
      * Get users base on account status active
      */

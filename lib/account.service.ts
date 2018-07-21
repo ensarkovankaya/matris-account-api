@@ -2,11 +2,13 @@ import { GraphQLClient } from 'graphql-request';
 import { Options } from 'graphql-request/dist/src/types';
 import { BaseService } from './base.service';
 import { ArgumentRequired, NotUserField, UnexpectedResponse, UserFieldRequired } from './error';
-import { FindArgs } from './grapgql/args/find.args';
+import { FilterArgs } from './grapgql/args/filter.args';
 import { GetArgs } from './grapgql/args/get.args';
+import { PaginationArgs } from './grapgql/args/pagination.input';
 import { IGetArgs } from './grapgql/models/args.model';
 import { IClientModel } from './models/client.model';
 import { ILoggerModel } from './models/logger.model';
+import { IPaginateResult, IPaginationOptions } from './models/pagination.model';
 import { User, UserSchema } from './models/user';
 import { IUserFilterModel } from './models/user.filter.model';
 import { IUserModel, UserField, userFields } from './models/user.model';
@@ -56,8 +58,13 @@ export class AccountService extends BaseService {
         // Get Fragment
         const fragment = this.buildUserFieldFragment(fields);
         try {
-            const query = 'query getUser($id: String, $email: String, $username: String)' +
-                `{user: get(id: $id, email: $email, username: $username) {...UserFields } }\n${fragment}`;
+            const query = `
+                query getUser($id: String, $email: String, $username: String) {
+                    user: get(id: $id, email: $email, username: $username) {
+                        ...UserFields
+                    }
+                }
+                ${fragment}`;
             const response = await this.call<{ user: Partial<IUserModel> | null }>(query, by);
             this.debug('Get', {response});
             response.raise();
@@ -72,39 +79,75 @@ export class AccountService extends BaseService {
     }
 
     /**
-     * Search users with given filters
+     * Make one find call with given filters returns one page of data
      * @param {IUserFilterModel} filter
      * @param {UserField[]} fields
-     * @return {Promise<UserSchema[]>}
+     * @param {IPaginationOptions} pagination
+     * @return {Promise<IPaginateResult<Partial<IUserModel>>>}
      */
-    public async search(filter: IUserFilterModel = {}, fields: UserField[] = userFields): Promise<UserSchema[]> {
-        try {
-            this.debug('Find', {filter, fields});
-            // Validate arguments
-            await new FindArgs(filter).validate();
+    public async find(filter: IUserFilterModel,
+                      fields: UserField[] = userFields,
+                      pagination: IPaginationOptions): Promise<IPaginateResult<Partial<IUserModel>>> {
+        this.debug('Find', {filter, fields, pagination});
+        // Validate arguments
+        await new FilterArgs(filter).validate();
+        await new PaginationArgs(pagination).validate();
 
-            // Get Fragment
-            const fragment = this.buildUserFieldFragment(fields);
-            const query = `query findUsers($active:Boolean, $gender: GenderQuery, $role: RoleQuery, $deleted: Boolean,
-                                            $deletedAt: CompareDateInput, $createdAt: CompareDateInput,
-                                            $updatedAt: CompareDateInput, $lastLogin: CompareDateInput,
-                                            $birthday: CompareDateInput) {
-                              find(active: $active, gender: $gender, role: $role, deleted: $deleted,
-                                  deletedAt: $deletedAt, createdAt: $createdAt, updatedAt: $updatedAt,
-                                  lastLogin: $lastLogin, birthday: $birthday) {
-                                    ...UserFields
+        // Get Fragment
+        const fragment = this.buildUserFieldFragment(fields);
+        const query = `query findUsers($filters: UserFilterInput!, $pagination: PaginationInput) {
+                              result: find(filters: $filters, pagination: $pagination) {
+                                docs { ...UserFields },
+                                total,
+                                limit,
+                                page,
+                                pages,
+                                offset
                               }
                             }
                             ${fragment}`;
-            const response = await this.call<{ users: Array<Partial<IUserModel>> }>(query, filter);
-            this.debug('Find', {response});
-            response.raise();
-            if (response.data === undefined || response.data.users === undefined) {
-                throw new UnexpectedResponse();
+        const response = await this.call<{ result: IPaginateResult<Partial<IUserModel>> }>(query, filter);
+        this.debug('Find', {response});
+
+        response.raise();
+
+        if (response.data === undefined || response.data.result === undefined) {
+            throw new UnexpectedResponse();
+        }
+        return {
+            docs: await Promise.all(response.data.result.docs.map(u => User(u))),
+            total: response.data.result.total,
+            limit: response.data.result.limit,
+            page: response.data.result.page,
+            pages: response.data.result.pages,
+            offset: response.data.result.offset
+        };
+    }
+
+    /**
+     * Search users with given filters returns iteratable user array
+     * @param {IUserFilterModel} filter
+     * @param {UserField[]} fields
+     * @param {IPaginationOptions} pagination
+     * @return {AsyncIterableIterator<Array<Partial<UserSchema>>>}
+     */
+    public async* search(filter: IUserFilterModel = {},
+                         fields: UserField[] = userFields,
+                         pagination: IPaginationOptions): AsyncIterableIterator<Array<Partial<UserSchema>>> {
+        try {
+            this.debug('Search', {filter, fields, pagination});
+            let page = pagination.page || 1;
+            const page1 = await this.find(filter, fields, pagination);
+            const pages = page1.pages || 1;
+            yield page1.docs;
+
+            while (page < pages) {
+                page++;
+                const result = await this.find(filter, fields, {...pagination, page});
+                yield result.docs;
             }
-            return await Promise.all(response.data.users.map(u => User(u)));
         } catch (e) {
-            this.error('Find', e);
+            this.error('Search', e);
             throw e;
         }
     }

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { FindArgs } from '../../../lib/grapgql/args/find.args';
+import { FindArgs } from '../../../lib/grapgql/args/filter.args';
 import { Gender } from '../../../lib/models/gender.model';
 
 class ShouldNotSucceed extends Error {
