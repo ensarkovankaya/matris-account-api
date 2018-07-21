@@ -8,8 +8,9 @@ class ShouldNotSucceed extends Error {
 }
 
 describe('FilterInput', () => {
-    it('should init empty', () => {
+    it('should init empty', async () => {
         const args = new FilterInput();
+        await args.validate();
         expect(args).to.be.deep.eq({});
     });
     describe('active', () => {
