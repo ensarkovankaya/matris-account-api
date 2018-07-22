@@ -6,9 +6,9 @@ import { GetArgs } from './grapgql/args/get.args';
 import { FilterInput } from './grapgql/inputs/filter.input';
 import { PaginationInput } from './grapgql/inputs/pagination.input';
 import { IGetArgs } from './grapgql/models/args.model';
+import { IPaginateResult, IPaginationOptions } from './grapgql/models/pagination.model';
 import { IClientModel } from './models/client.model';
 import { ILoggerModel } from './models/logger.model';
-import { IPaginateResult, IPaginationOptions } from './grapgql/models/pagination.model';
 import { User, UserSchema } from './models/user';
 import { IUserFilterModel } from './models/user.filter.model';
 import { IUserModel, UserField, userFields } from './models/user.model';
@@ -87,7 +87,8 @@ export class AccountService extends BaseService {
      */
     public async find(filter: IUserFilterModel,
                       fields: UserField[] = userFields,
-                      pagination: IPaginationOptions): Promise<IPaginateResult<Partial<IUserModel>>> {
+                      pagination: IPaginationOptions = new PaginationInput()):
+        Promise<IPaginateResult<Partial<UserSchema>>> {
         this.debug('Find', {filter, fields, pagination});
         // Validate arguments
         await new FilterInput(filter).validate();
@@ -106,7 +107,7 @@ export class AccountService extends BaseService {
                               }
                             }
                             ${fragment}`;
-        const response = await this.call<{ result: IPaginateResult<Partial<IUserModel>> }>(query, filter);
+        const response = await this.call<{ result: IPaginateResult<Partial<UserSchema>> }>(query, filter);
         this.debug('Find', {response});
 
         response.raise();
@@ -118,9 +119,9 @@ export class AccountService extends BaseService {
             docs: await Promise.all(response.data.result.docs.map(u => User(u))),
             total: response.data.result.total,
             limit: response.data.result.limit,
-            page: response.data.result.page,
-            pages: response.data.result.pages,
-            offset: response.data.result.offset
+            page: response.data.result.page || 1,
+            pages: response.data.result.pages || 1,
+            offset: response.data.result.offset || 0
         };
     }
 
@@ -133,7 +134,8 @@ export class AccountService extends BaseService {
      */
     public async* search(filter: IUserFilterModel = {},
                          fields: UserField[] = userFields,
-                         pagination: IPaginationOptions): AsyncIterableIterator<Array<Partial<UserSchema>>> {
+                         pagination: IPaginationOptions = new PaginationInput()):
+        AsyncIterableIterator<Array<Partial<UserSchema>>> {
         try {
             this.debug('Search', {filter, fields, pagination});
             let page = pagination.page || 1;
