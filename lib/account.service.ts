@@ -132,7 +132,7 @@ export class AccountService extends BaseService {
      * @param {IPaginationOptions} pagination
      * @return {AsyncIterableIterator<Array<Partial<UserSchema>>>}
      */
-    public async* search(filter: IUserFilterModel = {},
+    public async* search(filter: IUserFilterModel,
                          fields: UserField[] = userFields,
                          pagination: IPaginationOptions = new PaginationInput()):
         AsyncIterableIterator<Array<Partial<UserSchema>>> {
@@ -141,7 +141,11 @@ export class AccountService extends BaseService {
             let page = pagination.page || 1;
             const page1 = await this.find(filter, fields, pagination);
             const pages = page1.pages || 1;
-            yield page1.docs;
+            if (pages === page) {
+                return page1.docs;
+            } else {
+                yield page1.docs;
+            }
 
             while (page < pages) {
                 page++;
