@@ -10,7 +10,7 @@ describe('PaginationInput', () => {
     it('should init empty', async () => {
         const input = new PaginationInput();
         await input.validate();
-        expect(input).to.be.deep.eq({limit: 10, offset: 0, page: 1});
+        expect(input).to.be.deep.eq({limit: 25, offset: 0, page: 1});
     });
     describe('page', () => {
         it('should valid', async () => {
@@ -62,9 +62,9 @@ describe('PaginationInput', () => {
 
     describe('limit', () => {
         it('should valid', async () => {
-            const input1 = new PaginationInput({limit: 25});
+            const input1 = new PaginationInput({limit: 10});
             await input1.validate();
-            expect(input1.limit).to.be.eq(25);
+            expect(input1.limit).to.be.eq(10);
 
             const input2 = new PaginationInput({limit: 50});
             await input2.validate();
