@@ -4,6 +4,7 @@
     "strict": true,
     "lib": [
       "es6",
+      "esnext.asynciterable",
       "dom"
     ],
     "typeRoots": [
