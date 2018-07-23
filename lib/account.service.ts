@@ -138,18 +138,15 @@ export class AccountService extends BaseService {
         AsyncIterableIterator<Array<Partial<UserSchema>>> {
         try {
             this.debug('Search', {filter, fields, pagination});
-            let page = pagination.page || 1;
-            const page1 = await this.find(filter, fields, pagination);
-            const pages = page1.pages || 1;
-            if (pages === page) {
-                return page1.docs;
-            } else {
-                yield page1.docs;
-            }
-
-            while (page < pages) {
-                page++;
-                const result = await this.find(filter, fields, {...pagination, page});
+            let currentPagination = {...pagination};
+            while (true) {
+                const result = await this.find(filter, fields, currentPagination);
+                const page = result.page || 1;
+                const pages = result.pages || 1;
+                if (page >= pages) {
+                    return result.docs;
+                }
+                currentPagination = {...pagination, page: page + 1};
                 yield result.docs;
             }
         } catch (e) {
