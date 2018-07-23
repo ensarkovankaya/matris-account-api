@@ -22,8 +22,7 @@
   },
   "compileOnSave": true,
   "include": [
-    "lib/",
-    "test/"
+    "lib/"
   ],
   "exclude": [
     "node_modules/"
