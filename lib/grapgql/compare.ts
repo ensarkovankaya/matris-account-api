@@ -1,6 +1,6 @@
 import { IsDate, IsNumber } from 'class-validator';
-import { Validatable } from './validatable';
 import { ICompareDateInput, ICompareNullableDateInput, ICompareNumberInput } from './models/compare.model';
+import { Validatable } from './validatable';
 
 /**
  * Compare integer information for given field.
