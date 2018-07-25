@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { FilterInput } from '../../../../lib/grapgql/inputs/filter.input';
+import { ArgumentValidationError } from '../../../../lib/grapgql/validatable';
 import { Gender } from '../../../../lib/models/gender.model';
 
 class ShouldNotSucceed extends Error {
@@ -26,9 +27,8 @@ describe('FilterInput', () => {
                 await args.validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e).to.be.an('array');
-                expect(e).to.have.lengthOf(1);
-                expect(e[0].property).to.be.eq('active');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('active')).to.be.eq(true);
             }
         });
     });
@@ -57,9 +57,8 @@ describe('FilterInput', () => {
                     await args.validate();
                     throw new ShouldNotSucceed();
                 } catch (e) {
-                    expect(e).to.be.an('array');
-                    expect(e).to.have.lengthOf(1);
-                    expect(e[0].property).to.be.eq('gender');
+                    expect(e.name).to.be.eq('ArgumentValidationError');
+                    expect(e.hasError('gender')).to.be.eq(true);
                 }
             });
         });
@@ -92,9 +91,8 @@ describe('FilterInput', () => {
                 await args.validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e).to.be.an('array');
-                expect(e).to.have.lengthOf(1);
-                expect(e[0].property).to.be.eq('deleted');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('deleted')).to.be.eq(true);
             }
         });
     });
@@ -136,9 +134,8 @@ describe('FilterInput', () => {
                 await args.validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e).to.be.an('array');
-                expect(e).to.have.lengthOf(1);
-                expect(e[0].property).to.be.eq('deletedAt');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('deletedAt')).to.be.eq(true);
             }
         });
     });
@@ -180,9 +177,8 @@ describe('FilterInput', () => {
                 await args.validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e).to.be.an('array');
-                expect(e).to.have.lengthOf(1);
-                expect(e[0].property).to.be.eq('createdAt');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('createdAt')).to.be.eq(true);
             }
         });
     });
@@ -224,9 +220,8 @@ describe('FilterInput', () => {
                 await args.validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e).to.be.an('array');
-                expect(e).to.have.lengthOf(1);
-                expect(e[0].property).to.be.eq('updatedAt');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('updatedAt')).to.be.eq(true);
             }
         });
     });
@@ -268,9 +263,8 @@ describe('FilterInput', () => {
                 await args.validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e).to.be.an('array');
-                expect(e).to.have.lengthOf(1);
-                expect(e[0].property).to.be.eq('lastLogin');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('lastLogin')).to.be.eq(true);
             }
         });
     });
@@ -312,9 +306,8 @@ describe('FilterInput', () => {
                 await args.validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e).to.be.an('array');
-                expect(e).to.have.lengthOf(1);
-                expect(e[0].property).to.be.eq('birthday');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('birthday')).to.be.eq(true);
             }
         });
     });
@@ -330,27 +323,24 @@ describe('FilterInput', () => {
                 await new FilterInput({groups: 'a'} as any).validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e).to.be.an('array');
-                expect(e).to.have.lengthOf(1);
-                expect(e[0].property).to.be.eq('groups');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('groups')).to.be.eq(true);
             }
 
             try {
                 await new FilterInput({groups: ['shortid']} as any).validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e).to.be.an('array');
-                expect(e).to.have.lengthOf(1);
-                expect(e[0].property).to.be.eq('groups');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('groups')).to.be.eq(true);
             }
 
             try {
                 await new FilterInput({groups: ['longid'.repeat(10)]} as any).validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e).to.be.an('array');
-                expect(e).to.have.lengthOf(1);
-                expect(e[0].property).to.be.eq('groups');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('groups')).to.be.eq(true);
             }
         });
     });
