@@ -3,11 +3,13 @@ import { Options } from 'graphql-request/dist/src/types';
 import { BaseService } from './base.service';
 import { ArgumentRequired, NotUserField, UnexpectedResponse, UserFieldRequired } from './error';
 import { GetArgs } from './grapgql/args/get.args';
+import { CreateInput } from './grapgql/inputs/create.input';
 import { FilterInput } from './grapgql/inputs/filter.input';
 import { PaginationInput } from './grapgql/inputs/pagination.input';
 import { IGetArgs } from './grapgql/models/args.model';
 import { IPaginateResult, IPaginationOptions } from './grapgql/models/pagination.model';
 import { IClientModel } from './models/client.model';
+import { ICreateInputModel } from './models/create.input.model';
 import { ILoggerModel } from './models/logger.model';
 import { User, UserSchema } from './models/user';
 import { IUserFilterModel } from './models/user.filter.model';
@@ -151,6 +153,30 @@ export class AccountService extends BaseService {
             }
         } catch (e) {
             this.error('Search', e);
+            throw e;
+        }
+    }
+
+    public async create(data: ICreateInputModel, fields: UserField[] = userFields): Promise<Partial<UserSchema>> {
+        try {
+            await new CreateInput(data).validate();
+            // Get Fragment
+            const fragment = this.buildUserFieldFragment(fields);
+            const query = `mutation createUser($data: CreateInput!) {
+                              user: create(data: $data) { ...UserFields }
+                            }
+                            ${fragment}`;
+            const response = await this.call<{ user: Partial<IUserModel> }>(query, {data});
+            this.debug('Create', {response});
+
+            response.raise();
+
+            if (!response.data || !response.data.user) {
+                throw new UnexpectedResponse();
+            }
+            return await User(response.data.user);
+        } catch (e) {
+            this.error('Create', e);
             throw e;
         }
     }
