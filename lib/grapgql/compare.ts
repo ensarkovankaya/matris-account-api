@@ -1,4 +1,4 @@
-import { IsDate, IsNumber } from 'class-validator';
+import { IsDate, IsNumber, ValidateIf } from 'class-validator';
 import { ICompareDateInput, ICompareNullableDateInput, ICompareNumberInput } from './models/compare.model';
 import { Validatable } from './validatable';
 
@@ -10,30 +10,35 @@ export class CompareNumberInput extends Validatable implements ICompareNumberInp
     /**
      * Equal to number.
      */
+    @ValidateIf(((object, value) => value !== undefined))
     @IsNumber()
     public eq?: number;
 
     /**
      * Greater than number.
      */
+    @ValidateIf(((object, value) => value !== undefined))
     @IsNumber()
     public gt?: number;
 
     /**
      * Greater or equal than number.
      */
+    @ValidateIf(((object, value) => value !== undefined))
     @IsNumber()
     public gte?: number;
 
     /**
      * Less than number.
      */
+    @ValidateIf(((object, value) => value !== undefined))
     @IsNumber()
     public lt?: number;
 
     /**
      * Less than equal to number.
      */
+    @ValidateIf(((object, value) => value !== undefined))
     @IsNumber()
     public lte?: number;
 
@@ -50,30 +55,35 @@ export class CompareDateInput extends Validatable implements ICompareDateInput {
     /**
      * Equal to date
      */
+    @ValidateIf(((object, value) => value !== undefined))
     @IsDate()
     public eq?: Date;
 
     /**
      * After than date
      */
+    @ValidateIf(((object, value) => value !== undefined))
     @IsDate()
     public gt?: Date;
 
     /**
      * After or equal to date
      */
+    @ValidateIf(((object, value) => value !== undefined))
     @IsDate()
     public gte?: Date;
 
     /**
      * Before than date
      */
+    @ValidateIf(((object, value) => value !== undefined))
     @IsDate()
     public lt?: Date;
 
     /**
      * Before or equal to date.
      */
+    @ValidateIf(((object, value) => value !== undefined))
     @IsDate()
     public lte?: Date;
 
@@ -90,30 +100,35 @@ export class CompareNullableDateInput extends Validatable implements ICompareNul
     /**
      * Equal to date
      */
+    @ValidateIf(((object, value) => value !== undefined))
     @IsDate()
     public eq?: Date | null;
 
     /**
      * After than date
      */
+    @ValidateIf(((object, value) => value !== undefined))
     @IsDate()
     public gt?: Date;
 
     /**
      * After or equal to date
      */
+    @ValidateIf(((object, value) => value !== undefined))
     @IsDate()
     public gte?: Date;
 
     /**
      * Before than date
      */
+    @ValidateIf(((object, value) => value !== undefined))
     @IsDate()
     public lt?: Date;
 
     /**
      * Before or equal to date.
      */
+    @ValidateIf(((object, value) => value !== undefined))
     @IsDate()
     public lte?: Date;
 
