@@ -234,7 +234,7 @@ describe('AccountService Unit Tests', () => {
                     offset: 0
                 }
             });
-            const service = new AccountService({url: '', client, logger: console});
+            const service = new AccountService({url: '', client});
             const result = await service.find({});
             expect(result).to.be.an('object');
             expect(result).to.have.keys(['docs', 'total', 'limit', 'page', 'pages', 'offset']);
@@ -354,7 +354,7 @@ describe('AccountService Unit Tests', () => {
             }
 
             const client = new Client();
-            const service = new AccountService({url: '', client: client as any, logger: console});
+            const service = new AccountService({url: '', client: client as any});
             const iterator = service.search({}, userFields, {limit: 10});
             expect(iterator.next).to.be.a('function');
 
