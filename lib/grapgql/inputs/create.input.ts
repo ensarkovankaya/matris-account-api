@@ -31,7 +31,6 @@ export class CreateInput extends Validatable {
     public role: Role | undefined;
 
     @Length(8, 32, {message: 'InvalidLength'})
-    @Matches(new RegExp('.*\\S.*', 'g'), {message: 'InvalidPassword'})
     public password: string | undefined;
 
     @ValidateIf(((object, value) => value !== undefined))
@@ -40,7 +39,6 @@ export class CreateInput extends Validatable {
     @IsAlphanumeric({message: 'NotAlphanumeric'})
     public username?: string;
 
-    @ValidateIf(((object, value) => value !== undefined))
     @ValidateIf(((object, value) => value !== undefined))
     @IsBoolean()
     public active?: boolean;
