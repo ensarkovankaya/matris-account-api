@@ -29,9 +29,8 @@ describe('PaginationInput', () => {
                 await args.validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e).to.be.an('array');
-                expect(e).to.have.lengthOf(1);
-                expect(e[0].property).to.be.eq('page');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('page')).to.be.eq(true);
             }
         });
     });
@@ -53,9 +52,8 @@ describe('PaginationInput', () => {
                 await args.validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e).to.be.an('array');
-                expect(e).to.have.lengthOf(1);
-                expect(e[0].property).to.be.eq('offset');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('offset')).to.be.eq(true);
             }
         });
     });
@@ -77,9 +75,8 @@ describe('PaginationInput', () => {
                 await args.validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e).to.be.an('array');
-                expect(e).to.have.lengthOf(1);
-                expect(e[0].property).to.be.eq('limit');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('limit')).to.be.eq(true);
             }
 
             try {
@@ -87,9 +84,8 @@ describe('PaginationInput', () => {
                 await args.validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e).to.be.an('array');
-                expect(e).to.have.lengthOf(1);
-                expect(e[0].property).to.be.eq('limit');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('limit')).to.be.eq(true);
             }
         });
     });
