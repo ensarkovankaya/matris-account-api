@@ -24,9 +24,6 @@ export interface IServiceOptions {
 
 export class AccountService extends BaseService {
 
-    private url: string;
-    private overwrites?: Options;
-
     constructor(options: IServiceOptions) {
         const overwrites = options.overwrites || {};
         const client = options.client ? options.client : new GraphQLClient(options.url, {
@@ -37,8 +34,6 @@ export class AccountService extends BaseService {
             ...overwrites
         });
         super(client, options.logger);
-        this.url = options.url;
-        this.overwrites = options.overwrites;
     }
 
     /**
