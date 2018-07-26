@@ -5,6 +5,11 @@ import { UserGenerator } from '../data/data';
 import { readFileSync } from 'fs';
 import { IDBUserModel } from '../data/user.model';
 import {RootLogger} from 'matris-logger';
+import { userFields } from '../../lib/models/user.model';
+import { IPaginationOptions } from '../../lib/grapgql/models/pagination.model';
+import { IUserFilterModel } from '../../lib/models/user.filter.model';
+import { Role } from '../../lib/models/role.model';
+import { Gender } from '../../lib/models/gender.model';
 
 const URL = process.env.URL || 'http://localhost:3000/graphql';
 const rootLogger = new RootLogger({level: 'debug'});
@@ -249,5 +254,63 @@ describe('E2E', async () => {
             expect(user.id).to.be.eq(mockUser._id);
             expect(user.active).to.be.eq(false);
         });
-    })
+    });
+
+    describe('Find', () => {
+        it('should return deleted admins', async () => {
+            try {
+                const filter: IUserFilterModel = {role: {eq: Role.ADMIN}, deleted: true}; 
+                const pagination: IPaginationOptions = {limit: 100};
+                const mockUsers = generator.filter(filter);
+                const expectedResult = generator.paginate(mockUsers, pagination);
+                const result = await service.find(filter, userFields, pagination);
+                expect(result).to.be.an('object');
+                expect(result).to.have.keys(['docs', 'total', 'limit', 'page', 'pages', 'offset'])
+                expect(result.total).to.be.eq(expectedResult.total);
+                expect(result.page).to.be.eq(expectedResult.page);
+                expect(result.pages).to.be.eq(expectedResult.pages);
+                expect(result.offset).to.be.eq(expectedResult.offset);
+                expect(result.docs).to.be.an('array');
+                expect(result.docs).to.have.lengthOf(expectedResult.docs.length);
+                for (const user of result.docs) {
+                    expect(user).to.be.an('object');
+                    expect(user).to.have.keys(['id', 'email', 'firstName', 'lastName', 'username', 'createdAt', 'updatedAt', 'deletedAt',
+                        'deleted', 'role', 'lastLogin', 'gender', 'active', 'birthday', 'groups'
+                    ]);
+                }
+                expect(result.docs.map(u => u.id).sort()).to.be.deep.eq(expectedResult.docs.map(u => u._id).sort());
+            } catch (e) {
+                console.log(e);
+                throw e;
+            }
+        });
+
+        it('should return not active female instructors', async () => {
+            try {
+                const filter: IUserFilterModel = {role: {eq: Role.INSTRUCTOR}, gender: {eq: Gender.FEMALE}, active: false}; 
+                const pagination: IPaginationOptions = {limit: 100};
+                const mockUsers = generator.filter(filter);
+                const expectedResult = generator.paginate(mockUsers, pagination);
+                const result = await service.find(filter, userFields, pagination);
+                expect(result).to.be.an('object');
+                expect(result).to.have.keys(['docs', 'total', 'limit', 'page', 'pages', 'offset'])
+                expect(result.total).to.be.eq(expectedResult.total);
+                expect(result.page).to.be.eq(expectedResult.page);
+                expect(result.pages).to.be.eq(expectedResult.pages);
+                expect(result.offset).to.be.eq(expectedResult.offset);
+                expect(result.docs).to.be.an('array');
+                expect(result.docs).to.have.lengthOf(expectedResult.docs.length);
+                for (const user of result.docs) {
+                    expect(user).to.be.an('object');
+                    expect(user).to.have.keys(['id', 'email', 'firstName', 'lastName', 'username', 'createdAt', 'updatedAt', 'deletedAt',
+                        'deleted', 'role', 'lastLogin', 'gender', 'active', 'birthday', 'groups'
+                    ]);
+                }
+                expect(result.docs.map(u => u.id).sort()).to.be.deep.eq(expectedResult.docs.map(u => u._id).sort());
+            } catch (e) {
+                console.log(e);
+                throw e;
+            }
+        });
+    });
 });
