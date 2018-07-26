@@ -87,6 +87,19 @@ export class UserSchema extends Validatable implements Partial<IUser> {
     constructor(data: Partial<IUser>) {
         super(data);
     }
+
+    public toJSON(): Partial<IUserModel> {
+        const obj: Partial<IUserModel> = {};
+        Object.keys(this).forEach(field => {
+            const value = this[field];
+            if (value && value.toJSON) {
+                obj[field] = value.toJSON();
+            } else {
+                obj[field] = value;
+            }
+        });
+        return obj;
+    }
 }
 
 /**
