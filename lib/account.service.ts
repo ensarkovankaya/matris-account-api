@@ -85,13 +85,13 @@ export class AccountService extends BaseService {
      * @param {IPaginationOptions} pagination
      * @return {Promise<IPaginateResult<Partial<UserSchema>>>}
      */
-    public async find(filter: IUserFilterModel,
+    public async find(filters: IUserFilterModel,
                       fields: UserField[] = userFields,
                       pagination: IPaginationOptions = new PaginationInput()):
         Promise<IPaginateResult<Partial<UserSchema>>> {
-        this.debug('Find', {filter, fields, pagination});
+        this.debug('Find', {filters, fields, pagination});
         // Validate arguments
-        await new FilterInput(filter).validate();
+        await new FilterInput(filters).validate();
         await new PaginationInput(pagination).validate();
 
         // Get Fragment
@@ -107,7 +107,8 @@ export class AccountService extends BaseService {
                               }
                             }
                             ${fragment}`;
-        const response = await this.call<{ result: IPaginateResult<Partial<IUserModel>> }>(query, filter);
+        const variables = {filters, pagination};
+        const response = await this.call<{ result: IPaginateResult<Partial<IUserModel>> }>(query, variables);
         this.debug('Find', {response});
 
         response.raise();
