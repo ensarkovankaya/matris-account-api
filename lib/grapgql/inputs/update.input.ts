@@ -12,6 +12,7 @@ import {
 import { IsDateLike, IsInDateRange } from '../../decorators/date';
 import { Gender } from '../../models/gender.model';
 import { Role } from '../../models/role.model';
+import { IUpdateInputModel } from '../models/update.input.model';
 import { Validatable } from '../validatable';
 
 export class UpdateInput extends Validatable {
@@ -61,4 +62,8 @@ export class UpdateInput extends Validatable {
     @IsArray()
     @Length(24, 24, {message: 'InvalidIDLength', each: true})
     public groups?: string[];
+
+    constructor(data: IUpdateInputModel) {
+        super(data);
+    }
 }
