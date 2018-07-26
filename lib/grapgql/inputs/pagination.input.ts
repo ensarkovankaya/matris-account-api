@@ -14,8 +14,8 @@ export class PaginationInput extends Validatable implements IPaginationOptions {
     public offset?: number;
 
     @IsNumber()
-    @IsIn([10, 25, 50, 100, 150])
-    public limit?: 10 | 25 | 50 | 100 | 150;
+    @IsIn([5, 10, 25, 50, 100, 150])
+    public limit?: 5 | 10 | 25 | 50 | 100 | 150;
 
     constructor(data: IPaginationOptions = {}) {
         super({page: 1, offset: 0, limit: 25, ...data});

@@ -1,7 +1,7 @@
 export interface IPaginationOptions {
     page?: number;
     offset?: number;
-    limit?: 10 | 25 | 50 | 100 | 150;
+    limit?: 5 | 10 | 25 | 50 | 100 | 150;
 }
 
 export interface IPaginateResult<T> {
