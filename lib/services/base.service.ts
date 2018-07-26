@@ -1,7 +1,7 @@
 import { ClientError, Variables } from 'graphql-request/dist/src/types';
-import { IClientModel } from './models/client.model';
-import { ILoggerModel } from './models/logger.model';
-import { APIResponse } from './response';
+import { IClientModel } from '../models/client.model';
+import { ILoggerModel } from '../models/logger.model';
+import { APIResponse } from '../response';
 
 /**
  * Base GraphQLClient service and Response handler.
