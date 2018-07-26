@@ -114,7 +114,7 @@ export class UserGenerator {
         return obj;
     }
 
-    public paginate(data: any[], pagination: IPaginationOptions): IPaginateResult<any> {
+    public paginate(data: IUserModel[], pagination: IPaginationOptions): IPaginateResult<IUserModel> {
         const page = pagination.page || 1;
         const limit = pagination.limit || 0;
         const offset = pagination.offset || 0;
@@ -212,7 +212,7 @@ export class UserGenerator {
             if (filters.deleted !== undefined) {
                 data = data.filter(u => u.deleted === filters.deleted);
             }
-            if (filters.deletedAt) {
+            if (filters.deletedAt !== undefined) {
                 data = this.compare(data, 'deletedAt', filters.deletedAt);
             }
             if (filters.createdAt) {
@@ -221,7 +221,7 @@ export class UserGenerator {
             if (filters.updatedAt) {
                 data = this.compare(data, 'updatedAt', filters.updatedAt);
             }
-            if (filters.lastLogin) {
+            if (filters.lastLogin !== undefined) {
                 data = this.compare(data, 'lastLogin', filters.lastLogin);
             }
             if (filters.groups && filters.groups.length > 0) {
