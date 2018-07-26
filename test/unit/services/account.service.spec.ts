@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { AccountService } from '../../lib';
-import { Gender } from '../../lib/models/gender.model';
-import { UserSchema } from '../../lib/models/user';
-import { userFields } from '../../lib/models/user.model';
-import { UserGenerator } from '../data/data';
-import { MockGraphQLClient } from './mock.client';
+import { AccountService } from '../../../lib';
+import { Gender } from '../../../lib/models/gender.model';
+import { UserSchema } from '../../../lib/models/user';
+import { userFields } from '../../../lib/models/user.model';
+import { UserGenerator } from '../../data/data';
+import { MockGraphQLClient } from '../mock.client';
 import { readFileSync } from 'fs';
-import { IDBUserModel } from '../data/user.model';
+import { IDBUserModel } from '../../data/user.model';
 
 class ShouldNotSucceed extends Error {
     public name = 'ShouldNotSucceed';
