@@ -6,9 +6,11 @@ import { GetArgs } from './grapgql/args/get.args';
 import { CreateInput } from './grapgql/inputs/create.input';
 import { FilterInput } from './grapgql/inputs/filter.input';
 import { PaginationInput } from './grapgql/inputs/pagination.input';
+import { UpdateInput } from './grapgql/inputs/update.input';
 import { IGetArgs } from './grapgql/models/args.model';
 import { ICreateInputModel } from './grapgql/models/create.input.model';
 import { IPaginateResult, IPaginationOptions } from './grapgql/models/pagination.model';
+import { IUpdateInputModel } from './grapgql/models/update.input.model';
 import { IClientModel } from './models/client.model';
 import { ILoggerModel } from './models/logger.model';
 import { User, UserSchema } from './models/user';
@@ -152,17 +154,58 @@ export class AccountService extends BaseService {
         }
     }
 
+    /**
+     * Create user.
+     * @param {ICreateInputModel} data
+     * @param {UserField[]} fields: Return user fields
+     */
     public async create(data: ICreateInputModel, fields: UserField[] = userFields): Promise<Partial<UserSchema>> {
+        await new CreateInput(data).validate();
         try {
-            await new CreateInput(data).validate();
             // Get Fragment
             const fragment = this.buildUserFieldFragment(fields);
+            // Build query
             const query = `mutation createUser($data: CreateInput!) {
                               user: create(data: $data) { ...UserFields }
                             }
                             ${fragment}`;
             const response = await this.call<{ user: Partial<IUserModel> }>(query, {data});
             this.debug('Create', {response});
+
+            response.raise();
+
+            if (!response.data || !response.data.user) {
+                throw new UnexpectedResponse();
+            }
+            return await User(response.data.user);
+        } catch (e) {
+            this.error('Create', e);
+            throw e;
+        }
+    }
+
+    /**
+     * Update user.
+     * @param {string} id: Update user id.
+     * @param {IUpdateInputModel} data: Update data.
+     * @param {UserField[]} fields: Return user fields.
+     */
+    public async update(
+        id: string,
+        data: IUpdateInputModel,
+        fields: UserField[] = userFields
+    ): Promise<Partial<UserSchema>> {
+        await new UpdateInput(data).validate();
+        try {
+            // Get Fragment
+            const fragment = this.buildUserFieldFragment(fields);
+            // Build query
+            const query = `mutation updateUser($id: String!, $data: UpdateInput!) {
+                              user: update(id: $id, data: $data) { ...UserFields }
+                            }
+                            ${fragment}`;
+            const response = await this.call<{ user: Partial<IUserModel> }>(query, {id, data});
+            this.debug('Update', {response});
 
             response.raise();
 
