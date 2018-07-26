@@ -30,6 +30,8 @@ const choose = <T>(choices: T[]): T => {
 export interface IUserFilter {
     role?: string;
     gender?: string;
+    deleted?: boolean;
+    active?: boolean;
 }
 
 export interface IMultipleFilter extends IUserFilter {
@@ -67,6 +69,12 @@ export class UserGenerator {
         }
         if (filter.gender) {
             filtered = filtered.filter(u => u.gender === filter.gender);
+        }
+        if (typeof filter.deleted === 'boolean') {
+            filtered = filtered.filter(u => u.deleted === filter.deleted);
+        }
+        if (typeof filter.active === 'boolean') {
+            filtered = filtered.filter(u => u.active === filter.active);
         }
         if (filtered.length === 0) {
             throw new Error('User not exists');

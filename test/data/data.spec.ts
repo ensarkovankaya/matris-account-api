@@ -3,7 +3,7 @@ import { describe, it } from 'mocha';
 import { UserGenerator } from './data';
 
 describe('UserGenerator', () => {
-    it('should get one valid user', () => {
+    it('should get one valid user', async () => {
         const generator = new UserGenerator();
         const user = generator.get();
         expect(user).to.be.an('object');
@@ -66,10 +66,10 @@ describe('UserGenerator', () => {
         const users = generator.multiple(2, {gender: 'MALE', role: 'STUDENT'});
         expect(users).to.have.lengthOf(2);
         expect(users[0]).to.be.not.deep.eq(users[1]);
-
+        
         expect(users[0].gender).to.be.eq('MALE');
         expect(users[1].gender).to.be.eq('MALE');
-
+        
         expect(users[0].role).to.be.eq('STUDENT');
         expect(users[1].role).to.be.eq('STUDENT');
     });
