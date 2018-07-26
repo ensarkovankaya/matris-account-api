@@ -9,6 +9,24 @@ export interface IUserModel {
     lastName: string;
     role: Role;
     gender: Gender;
+    birthday: string | null;
+    active: boolean;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
+    deleted: boolean;
+    lastLogin: string | null;
+    groups: string[];
+}
+
+export interface IUser {
+    id: string;
+    username: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    role: Role;
+    gender: Gender;
     birthday: Date | null;
     active: boolean;
     createdAt: Date;

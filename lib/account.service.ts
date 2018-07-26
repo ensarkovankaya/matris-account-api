@@ -83,7 +83,7 @@ export class AccountService extends BaseService {
      * @param {IUserFilterModel} filter
      * @param {UserField[]} fields
      * @param {IPaginationOptions} pagination
-     * @return {Promise<IPaginateResult<Partial<IUserModel>>>}
+     * @return {Promise<IPaginateResult<Partial<UserSchema>>>}
      */
     public async find(filter: IUserFilterModel,
                       fields: UserField[] = userFields,
@@ -107,7 +107,7 @@ export class AccountService extends BaseService {
                               }
                             }
                             ${fragment}`;
-        const response = await this.call<{ result: IPaginateResult<Partial<UserSchema>> }>(query, filter);
+        const response = await this.call<{ result: IPaginateResult<Partial<IUserModel>> }>(query, filter);
         this.debug('Find', {response});
 
         response.raise();

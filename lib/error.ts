@@ -1,5 +1,5 @@
-import { ValidationError } from 'class-validator/validation/ValidationError';
 import { GraphQLError } from 'graphql-request/dist/src/types';
+import { ArgumentValidationError } from './grapgql/validatable';
 
 export class APIValidationError extends Error {
 
@@ -44,7 +44,7 @@ export class UserFieldRequired extends Error {
 export class UserInvalid extends Error {
     public name = 'UserInvalid';
 
-    constructor(public errors: ValidationError[]) {
+    constructor(public error: ArgumentValidationError) {
         super();
     }
 }

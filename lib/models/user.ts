@@ -11,35 +11,43 @@ import {
     validateOrReject
 } from 'class-validator';
 import { UserFieldRequired, UserInvalid } from '../error';
+import { Validatable } from '../grapgql/validatable';
 import { Gender } from './gender.model';
 import { Role } from './role.model';
-import { IUserModel, userFields } from './user.model';
+import { IUser, IUserModel, userFields } from './user.model';
 
-export class UserSchema implements Partial<IUserModel> {
+export class UserSchema extends Validatable implements Partial<IUser> {
+    @ValidateIf(((object, value) => value !== undefined))
     @Length(24, 24)
     public id?: string;
 
+    @ValidateIf(((object, value) => value !== undefined))
     @Length(4, 20, {message: 'InvalidLength'})
     @IsLowercase({message: 'NotLowercase'})
     @IsAlphanumeric({message: 'NotAlphanumeric'})
     public username?: string;
 
+    @ValidateIf(((object, value) => value !== undefined))
     @IsEmail()
     public email?: string;
 
+    @ValidateIf(((object, value) => value !== undefined))
     @IsString()
     @Length(2, 32, {message: 'InvalidLength'})
     @Matches(new RegExp('^[a-zA-Z ]+$'), 'g')
     public firstName?: string;
 
+    @ValidateIf(((object, value) => value !== undefined))
     @IsString()
     @Length(2, 32, {message: 'InvalidLength'})
     @Matches(new RegExp('^[a-zA-Z ]+$'), 'g')
     public lastName?: string;
 
+    @ValidateIf(((object, value) => value !== undefined))
     @IsIn([Role.ADMIN, Role.MANAGER, Role.INSTRUCTOR, Role.PARENT, Role.STUDENT])
     public role?: Role;
 
+    @ValidateIf(((object, value) => value !== undefined))
     @IsIn([Gender.MALE, Gender.FEMALE, Gender.UNKNOWN])
     public gender?: Gender;
 
@@ -47,29 +55,37 @@ export class UserSchema implements Partial<IUserModel> {
     @IsDate()
     public birthday?: Date | null;
 
+    @ValidateIf(((object, value) => value !== undefined))
     @IsBoolean()
     public active?: boolean;
 
+    @ValidateIf(((object, value) => value !== undefined))
     @IsDate()
     public createdAt?: Date;
 
+    @ValidateIf(((object, value) => value !== undefined))
     @IsDate()
     public updatedAt?: Date;
 
-    @ValidateIf(((object, value) => value !== null))
+    @ValidateIf(((object, value) => !!value))
     @IsDate()
     public deletedAt?: Date | null;
 
     @IsBoolean()
     public deleted?: boolean;
 
-    @ValidateIf(((object, value) => value !== null))
+    @ValidateIf(((object, value) => !!value))
     @IsDate()
     public lastLogin?: Date | null;
 
+    @ValidateIf(((object, value) => value !== undefined))
     @IsArray()
     @Length(24, 24, {message: 'InvalidIDLength', each: true})
     public groups?: string[];
+
+    constructor(data: Partial<IUser>) {
+        super(data);
+    }
 }
 
 /**
@@ -81,28 +97,42 @@ export const User = async (data: Partial<IUserModel>): Promise<UserSchema> => {
     if (Object.keys(data).length === 0) {
         throw new UserFieldRequired();
     }
-    const user = new UserSchema();
+    const createData: Partial<IUser> = {};
     Object.keys(data).forEach(key => {
         if (userFields.find(field => field === key)) {
             if (key === '_id') {
-                user.id = data._id;
+                createData.id = data._id;
             } else if (key === 'birthday') {
-                user.birthday = data.birthday ? new Date(data.birthday) : data.birthday;
+                if (data.birthday) {
+                    createData.birthday = new Date(data.birthday);
+                } else {
+                    createData.birthday = null;
+                }
             } else if (key === 'createdAt' && data.createdAt) {
-                user.createdAt = new Date(data.createdAt);
+                createData.createdAt = new Date(data.createdAt);
             } else if (key === 'updatedAt' && data.updatedAt) {
-                user.updatedAt = new Date(data.updatedAt);
+                createData.updatedAt = new Date(data.updatedAt);
             } else if (key === 'deletedAt') {
-                user.deletedAt = data.deletedAt ? new Date(data.deletedAt) : data.deletedAt;
+                if (data.deletedAt) {
+                    createData.deletedAt = new Date(data.deletedAt);
+                } else {
+                    createData.deletedAt = null;
+                }
             } else if (key === 'lastLogin') {
-                user.lastLogin = data.lastLogin ? new Date(data.lastLogin) : data.lastLogin;
+                if (data.lastLogin) {
+                    createData.lastLogin = new Date(data.lastLogin);
+                } else {
+                    createData.lastLogin = null;
+                }
             } else {
-                user[key] = data[key];
+                createData[key] = data[key];
             }
         }
     });
+    const user = new UserSchema(createData);
+
     try {
-        await validateOrReject(user, {skipMissingProperties: true});
+        await user.validate();
     } catch (e) {
         throw new UserInvalid(e);
     }
