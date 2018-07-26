@@ -1,4 +1,5 @@
 import { ICompareNullableDateInput } from '../../lib/grapgql/models/compare.model';
+import { IPaginateResult, IPaginationOptions } from '../../lib/grapgql/models/pagination.model';
 import { User } from '../../lib/models/user';
 import { IUserFilterModel } from '../../lib/models/user.filter.model';
 import { IUserModel, UserField } from '../../lib/models/user.model';
@@ -111,6 +112,44 @@ export class UserGenerator {
         const obj = {};
         fields.forEach(field => obj[field] = user[field]);
         return obj;
+    }
+
+    public paginate(data: any[], pagination: IPaginationOptions): IPaginateResult<any> {
+        const page = pagination.page || 1;
+        const limit = pagination.limit || 0;
+        const offset = pagination.offset || 0;
+
+        if (offset > data.length) {
+            throw new Error('Offset out of data size.');
+        }
+
+        // Offset
+        const offseted = data.slice(offset);
+
+        const total = offseted.length;
+
+        // Find pages
+        let pages: number = 0;
+        if (limit >= offseted.length) {
+            pages = 1;
+        } else {
+            let count = 0;
+            while (count < offseted.length) {
+                count += limit;
+                pages += 1;
+            }
+        }
+        const start = limit * (page - 1);
+        const end = limit ? start + limit : offseted.length;
+        const docs = offseted.slice(start, end);
+        return {
+            docs,
+            total,
+            offset,
+            limit,
+            page,
+            pages
+        };
     }
 
     public filter(filters: IUserFilterModel): IUserModel[] {
