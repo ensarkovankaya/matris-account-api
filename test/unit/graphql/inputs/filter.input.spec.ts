@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { FilterInput } from '../../../../lib/grapgql/inputs/filter.input';
-import { ArgumentValidationError } from '../../../../lib/grapgql/validatable';
 import { Gender } from '../../../../lib/models/gender.model';
 
 class ShouldNotSucceed extends Error {
