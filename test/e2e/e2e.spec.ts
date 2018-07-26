@@ -7,12 +7,12 @@ import { IDBUserModel } from '../data/user.model';
 import {RootLogger} from 'matris-logger';
 
 const URL = process.env.URL || 'http://localhost:3000/graphql';
-const USERS: IDBUserModel[] = JSON.parse(readFileSync(__dirname + '/../data/valid.json', 'utf8'));
 const rootLogger = new RootLogger({level: 'debug'});
 const service = new AccountService({url: URL, logger: rootLogger.getLogger('AccountService')});
 const generator = new UserGenerator();
 
 before('Load Users', async () => {
+    const USERS: IDBUserModel[] = JSON.parse(readFileSync(__dirname + '/../data/valid.json', 'utf8'));
     await generator.load(USERS);
 });
 
