@@ -136,8 +136,8 @@ export class AccountService extends BaseService {
                          fields: UserField[] = userFields,
                          pagination: IPaginationOptions = new PaginationInput()):
         AsyncIterableIterator<Array<Partial<UserSchema>>> {
+        this.debug('Search', {filter, fields, pagination});
         try {
-            this.debug('Search', {filter, fields, pagination});
             let currentPagination = {...pagination};
             while (true) {
                 const result = await this.find(filter, fields, currentPagination);
@@ -161,6 +161,7 @@ export class AccountService extends BaseService {
      * @param {UserField[]} fields: Return user fields
      */
     public async create(data: ICreateInputModel, fields: UserField[] = userFields): Promise<Partial<UserSchema>> {
+        this.debug('Create', {data, fields});
         await new CreateInput(data).validate();
         try {
             // Get Fragment
@@ -196,6 +197,7 @@ export class AccountService extends BaseService {
         data: IUpdateInputModel,
         fields: UserField[] = userFields
     ): Promise<Partial<UserSchema>> {
+        this.debug('Update', {id, data, fields});
         await new IDInput(id).validate();
         await new UpdateInput(data).validate();
         try {
@@ -217,6 +219,26 @@ export class AccountService extends BaseService {
             return await User(response.data.user);
         } catch (e) {
             this.error('Create', e);
+            throw e;
+        }
+    }
+
+    public async delete(id: string): Promise<void> {
+        this.debug('Delete', {id});
+        await new IDInput(id).validate();
+        try {
+            // Build query
+            const query = `mutation deleteUser($id: String!) {deleted: delete(id: $id)}`;
+            const response = await this.call<{ deleted: true }>(query, {id});
+            this.debug('Delete', {response});
+
+            response.raise();
+
+            if (!response.data || !response.data.deleted) {
+                throw new UnexpectedResponse();
+            }
+        } catch (e) {
+            this.error('Delete', e);
             throw e;
         }
     }
