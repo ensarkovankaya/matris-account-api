@@ -1,22 +1,22 @@
 import { GraphQLClient } from 'graphql-request';
 import { Options } from 'graphql-request/dist/src/types';
+import { ArgumentRequired, NotUserField, UnexpectedResponse, UserFieldRequired } from '../error';
+import { GetArgs } from '../grapgql/args/get.args';
+import { CreateInput } from '../grapgql/inputs/create.input';
+import { FilterInput } from '../grapgql/inputs/filter.input';
+import { IDInput } from '../grapgql/inputs/id.input';
+import { PaginationInput } from '../grapgql/inputs/pagination.input';
+import { UpdateInput } from '../grapgql/inputs/update.input';
+import { IGetArgs } from '../grapgql/models/args.model';
+import { ICreateInputModel } from '../grapgql/models/create.input.model';
+import { IPaginateResult, IPaginationOptions } from '../grapgql/models/pagination.model';
+import { IUpdateInputModel } from '../grapgql/models/update.input.model';
+import { IClientModel } from '../models/client.model';
+import { ILoggerModel } from '../models/logger.model';
+import { User, UserSchema } from '../models/user';
+import { IUserFilterModel } from '../models/user.filter.model';
+import { IUserModel, UserField, userFields } from '../models/user.model';
 import { BaseService } from './base.service';
-import { ArgumentRequired, NotUserField, UnexpectedResponse, UserFieldRequired } from './error';
-import { GetArgs } from './grapgql/args/get.args';
-import { CreateInput } from './grapgql/inputs/create.input';
-import { FilterInput } from './grapgql/inputs/filter.input';
-import { IDInput } from './grapgql/inputs/id.input';
-import { PaginationInput } from './grapgql/inputs/pagination.input';
-import { UpdateInput } from './grapgql/inputs/update.input';
-import { IGetArgs } from './grapgql/models/args.model';
-import { ICreateInputModel } from './grapgql/models/create.input.model';
-import { IPaginateResult, IPaginationOptions } from './grapgql/models/pagination.model';
-import { IUpdateInputModel } from './grapgql/models/update.input.model';
-import { IClientModel } from './models/client.model';
-import { ILoggerModel } from './models/logger.model';
-import { User, UserSchema } from './models/user';
-import { IUserFilterModel } from './models/user.filter.model';
-import { IUserModel, UserField, userFields } from './models/user.model';
 
 export interface IServiceOptions {
     url: string;
