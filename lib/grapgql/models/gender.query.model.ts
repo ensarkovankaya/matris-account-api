@@ -1,4 +1,4 @@
-import { Gender } from './gender.model';
+import { Gender } from '../../models/gender.model';
 
 export interface IGenderQueryModel {
     eq?: Gender;

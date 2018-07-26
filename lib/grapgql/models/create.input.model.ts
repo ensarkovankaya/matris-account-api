@@ -1,5 +1,5 @@
-import { Gender } from './gender.model';
-import { Role } from './role.model';
+import { Gender } from '../../models/gender.model';
+import { Role } from '../../models/role.model';
 
 export interface ICreateInputModel {
     email: string;

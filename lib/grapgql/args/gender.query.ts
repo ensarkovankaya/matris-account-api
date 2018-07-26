@@ -1,6 +1,6 @@
 import { IsIn, ValidateIf } from 'class-validator';
 import { Gender } from '../../models/gender.model';
-import { IGenderQueryModel } from '../../models/gender.query.model';
+import { IGenderQueryModel } from '../models/gender.query.model';
 import { Validatable } from '../validatable';
 
 export class GenderQuery extends Validatable implements IGenderQueryModel {

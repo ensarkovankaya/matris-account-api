@@ -1,16 +1,16 @@
-import { ICompareModel, INullableCompareModel } from './compare.model';
-import { IGenderQueryModel } from './gender.query.model';
-import { IRoleQueryModel } from './role.query.model';
+import { ICompareDateInput, ICompareNullableDateInput } from '../grapgql/models/compare.model';
+import { IGenderQueryModel } from '../grapgql/models/gender.query.model';
+import { IRoleQueryModel } from '../grapgql/models/role.query.model';
 
 export interface IUserFilterModel {
     active?: boolean;
     role?: IRoleQueryModel;
     gender?: IGenderQueryModel;
-    birthday?: INullableCompareModel;
+    birthday?: ICompareNullableDateInput;
     deleted?: boolean;
-    deletedAt?: INullableCompareModel;
-    createdAt?: ICompareModel;
-    updatedAt?: ICompareModel;
-    lastLogin?: INullableCompareModel;
+    deletedAt?: ICompareNullableDateInput;
+    createdAt?: ICompareDateInput;
+    updatedAt?: ICompareDateInput;
+    lastLogin?: ICompareNullableDateInput;
     groups?: string[];
 }
