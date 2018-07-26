@@ -1,10 +1,18 @@
 import { expect } from 'chai';
-import { describe, it } from 'mocha';
+import { before, describe, it } from 'mocha';
 import { UserGenerator } from './data';
+import { IDBUserModel } from './user.model';
+import { readFileSync } from 'fs';
+
+const generator = new UserGenerator();
+
+before('Load Data', async () => {
+    const USERS: IDBUserModel[] = JSON.parse(readFileSync(__dirname + '/../data/valid.json', 'utf8'));
+    await generator.load(USERS);
+});
 
 describe('UserGenerator', () => {
     it('should get one valid user', async () => {
-        const generator = new UserGenerator();
         const user = generator.get();
         expect(user).to.be.an('object');
         expect(user._id).to.be.a('string');
@@ -30,7 +38,6 @@ describe('UserGenerator', () => {
         }
     });
     it('should get one valid user with filter', () => {
-        const generator = new UserGenerator();
         const user = generator.get({role: 'ADMIN', gender: 'MALE'});
         expect(user).to.be.an('object');
         expect(user._id).to.be.a('string');
@@ -56,13 +63,11 @@ describe('UserGenerator', () => {
         }
     });
     it('should get multiple users', () => {
-        const generator = new UserGenerator();
         const users = generator.multiple(2);
         expect(users).to.have.lengthOf(2);
         expect(users[0]).to.be.not.deep.eq(users[1]);
     });
     it('should get multiple users with filter', () => {
-        const generator = new UserGenerator();
         const users = generator.multiple(2, {gender: 'MALE', role: 'STUDENT'});
         expect(users).to.have.lengthOf(2);
         expect(users[0]).to.be.not.deep.eq(users[1]);
@@ -74,7 +79,6 @@ describe('UserGenerator', () => {
         expect(users[1].role).to.be.eq('STUDENT');
     });
     it('should get partial user', () => {
-        const generator = new UserGenerator();
         const user = generator.get();
         const partial = generator.partial(user, ['_id', 'email', 'role']);
         expect(partial).to.have.keys(['_id', 'email', 'role']);
