@@ -12,13 +12,13 @@ export class BaseService {
     }
 
     public debug(message: string, data?: any) {
-        if (this.logger) {
+        if (this.logger && this.logger.debug) {
             this.logger.debug(message, data);
         }
     }
 
     public error(message: string, err: Error, data?: any) {
-        if (this.logger) {
+        if (this.logger && this.logger.error) {
             this.logger.error(message, err, data);
         }
     }
