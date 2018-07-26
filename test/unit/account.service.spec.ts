@@ -23,7 +23,7 @@ class MethodCalled extends Error {
 
 describe('AccountService Unit Tests', async () => {
     const generator = new UserGenerator();
-    const USERS: IDBUserModel[] = JSON.parse(readFileSync(__dirname + '../data/valid.json', 'utf8'));
+    const USERS: IDBUserModel[] = JSON.parse(readFileSync(__dirname + '/../data/valid.json', 'utf8'));
     await generator.load(USERS);
 
     describe('buildUserFieldFragment', () => {
@@ -104,7 +104,7 @@ describe('AccountService Unit Tests', async () => {
             const client = new MockGraphQLClient('', {}, {user: null});
             const service = new AccountService({url: '', client});
             await service.get({
-                id: mockUser.id,
+                id: mockUser._id,
                 email: mockUser.email,
                 username: mockUser.username
             }, ['_id']);
@@ -115,9 +115,9 @@ describe('AccountService Unit Tests', async () => {
             const mockUser = generator.get();
             const client = new MockGraphQLClient('', {}, {user: mockUser});
             const service = new AccountService({url: '', client});
-            const user = await service.get({id: mockUser.id}) as UserSchema;
+            const user = await service.get({id: mockUser._id}) as UserSchema;
             expect(user).to.be.an('object');
-            expect(user.id).to.be.deep.eq(mockUser.id);
+            expect(user.id).to.be.deep.eq(mockUser._id);
             expect(user.active).to.be.eq(mockUser.active);
             if (mockUser.birthday !== null) {
                 expect(user.birthday).to.be.a('date');
@@ -240,7 +240,7 @@ describe('AccountService Unit Tests', async () => {
             expect(result).to.have.keys(['docs', 'total', 'limit', 'page', 'pages', 'offset']);
             expect(result.docs).to.be.an('array');
             expect(result.docs).to.have.lengthOf(10);
-            expect(result.docs.map(u => u.id)).to.deep.eq(mockUsers.map(u => u.id));
+            expect(result.docs.map(u => u.id)).to.deep.eq(mockUsers.map(u => u._id));
             expect(result.total).to.be.eq(10);
             expect(result.limit).to.be.eq(25);
             expect(result.page).to.be.eq(1);
@@ -363,7 +363,7 @@ describe('AccountService Unit Tests', async () => {
             expect(iterResult1.done).to.be.eq(false);
             expect(iterResult1.value).to.be.an('array');
             expect(iterResult1.value.map(u => u.id))
-                .to.be.deep.eq(mockUsers.slice(0, 10).map(u => u.id));
+                .to.be.deep.eq(mockUsers.slice(0, 10).map(u => u._id));
 
             const iterResult2 = await iterator.next();
             expect(iterResult2).to.be.an('object');
@@ -371,7 +371,7 @@ describe('AccountService Unit Tests', async () => {
             expect(iterResult2.done).to.be.eq(false);
             expect(iterResult2.value).to.be.an('array');
             expect(iterResult2.value.map(u => u.id))
-                .to.be.deep.eq(mockUsers.slice(10, 20).map(u => u.id));
+                .to.be.deep.eq(mockUsers.slice(10, 20).map(u => u._id));
 
             const iterResult3 = await iterator.next();
             expect(iterResult3).to.be.an('object');
@@ -379,7 +379,7 @@ describe('AccountService Unit Tests', async () => {
             expect(iterResult3.done).to.be.eq(true);
             expect(iterResult3.value).to.be.an('array');
             expect(iterResult3.value.map(u => u.id))
-                .to.be.deep.eq(mockUsers.slice(20).map(u => u.id));
+                .to.be.deep.eq(mockUsers.slice(20).map(u => u._id));
         });
     });
 });

@@ -1,5 +1,5 @@
 import { User, UserSchema } from '../../lib/models/user';
-import { UserField } from '../../lib/models/user.model';
+import { IUserModel, UserField } from '../../lib/models/user.model';
 import { IDBUserModel } from './user.model';
 
 /**
@@ -38,15 +38,18 @@ export interface IMultipleFilter extends IUserFilter {
 
 export class UserGenerator {
 
-    private users: UserSchema[];
+    private users: IDBUserModel[];
 
     constructor() {
         this.users = [];
     }
 
-    public async load(data: IDBUserModel[]) {
+    public async load(data: IDBUserModel[], validate: boolean = true) {
+        if (validate) {
+            await Promise.all(data.map(u => User(u)));
+        }
         try {
-            this.users = await Promise.all(data.map(u => User(u)));
+            this.users = data;
         } catch (e) {
             console.error('Load failed', e);
             throw e;
@@ -55,9 +58,9 @@ export class UserGenerator {
     /**
      * Returns one valid user data
      * @param {IUserFilter} filter
-     * @return {UserSchema}
+     * @return {IUserModel}
      */
-    public get(filter: IUserFilter = {}): UserSchema {
+    public get(filter: IUserFilter = {}): IUserModel {
         let filtered = this.users.slice();
         if (filter.role) {
             filtered = filtered.filter(u => u.role === filter.role);
@@ -68,20 +71,20 @@ export class UserGenerator {
         if (filtered.length === 0) {
             throw new Error('User not exists');
         }
-        return choose<UserSchema>(filtered);
+        return choose<IUserModel>(filtered);
     }
 
     /**
      * Returns multiple valid user data
      * @param {number} limit
      * @param {IMultipleFilter} filter
-     * @return {UserSchema[]}
+     * @return {IUserModel[]}
      */
-    public multiple(limit: number, filter: IMultipleFilter = {}): UserSchema[] {
-        const users: UserSchema[] = [];
+    public multiple(limit: number, filter: IMultipleFilter = {}): IUserModel[] {
+        const users: IUserModel[] = [];
         while (users.length < limit) {
             const chosen = this.get(filter);
-            if (!users.find(u => u.id === chosen.id)) {
+            if (!users.find(u => u._id === chosen._id)) {
                 users.push(chosen);
             }
         }
@@ -92,9 +95,9 @@ export class UserGenerator {
      * Generates partial user. Returns new user object which have only given fields.
      * @param {UserSchema} user
      * @param {UserField[]} fields
-     * @return {Partial<UserSchema>}
+     * @return {Partial<IUserModel>}
      */
-    public partial(user: UserSchema, fields: UserField[]): Partial<UserSchema> {
+    public partial(user: IUserModel, fields: UserField[]): Partial<IUserModel> {
         const obj = {};
         fields.forEach(field => obj[field] = user[field]);
         return obj;
