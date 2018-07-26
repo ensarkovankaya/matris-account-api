@@ -161,7 +161,13 @@ export class UserGenerator {
             if (filter.eq === null) {
                 return data.filter(d => d[path] === filter.eq);
             }
-            return data.filter(d => new Date(d[path]) === filter.eq);
+            return data.filter(d => {
+                const value = d[path];
+                if (value) {
+                    return new Date(value) === filter.eq;
+                }
+                return false;
+            });
         }
 
         if (filter.gt) {
