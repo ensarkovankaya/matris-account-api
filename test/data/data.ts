@@ -1,7 +1,6 @@
-import { readFileSync } from 'fs';
-import { IUserModel, UserField } from '../../lib/models/user.model';
-
-const USERS: IUserModel[] = JSON.parse(readFileSync('test/data/valid.json', 'utf8'));
+import { User, UserSchema } from '../../lib/models/user';
+import { UserField } from '../../lib/models/user.model';
+import { IDBUserModel } from './user.model';
 
 /**
  * Shuffles array in place. ES6 version
@@ -20,7 +19,7 @@ const shuffle = (array: any[]) => {
  * @param {any[]} choices
  * @return {any}
  */
-const choose = <T>(choices: T[]) => {
+const choose = <T>(choices: T[]): T => {
     if (choices.length === 0) {
         throw new Error('Array is empty');
     }
@@ -38,13 +37,28 @@ export interface IMultipleFilter extends IUserFilter {
 }
 
 export class UserGenerator {
+
+    private users: UserSchema[];
+
+    constructor() {
+        this.users = [];
+    }
+
+    public async load(data: IDBUserModel[]) {
+        try {
+            this.users = await Promise.all(data.map(u => User(u)));
+        } catch (e) {
+            console.error('Load failed', e);
+            throw e;
+        }
+    }
     /**
      * Returns one valid user data
      * @param {IUserFilter} filter
-     * @return {IUserModel}
+     * @return {UserSchema}
      */
-    public get(filter: IUserFilter = {}): IUserModel {
-        let filtered = USERS.slice();
+    public get(filter: IUserFilter = {}): UserSchema {
+        let filtered = this.users.slice();
         if (filter.role) {
             filtered = filtered.filter(u => u.role === filter.role);
         }
@@ -54,27 +68,20 @@ export class UserGenerator {
         if (filtered.length === 0) {
             throw new Error('User not exists');
         }
-        return choose<IUserModel>(filtered);
+        return choose<UserSchema>(filtered);
     }
 
     /**
      * Returns multiple valid user data
-     * Max limit 100.
      * @param {number} limit
      * @param {IMultipleFilter} filter
-     * @return {IUserModel[]}
+     * @return {UserSchema[]}
      */
-    public multiple(limit: number, filter: IMultipleFilter = {}): IUserModel[] {
-        if (limit > 100) {
-            throw new Error('Max limit is 100');
-        }
-        if (limit === 100) {
-            return USERS.slice();
-        }
-        const users: IUserModel[] = [];
+    public multiple(limit: number, filter: IMultipleFilter = {}): UserSchema[] {
+        const users: UserSchema[] = [];
         while (users.length < limit) {
             const chosen = this.get(filter);
-            if (!users.find(u => u._id === chosen._id)) {
+            if (!users.find(u => u.id === chosen.id)) {
                 users.push(chosen);
             }
         }
@@ -83,11 +90,11 @@ export class UserGenerator {
 
     /**
      * Generates partial user. Returns new user object which have only given fields.
-     * @param {IUserModel} user
+     * @param {UserSchema} user
      * @param {UserField[]} fields
-     * @return {Partial<IUserModel>}
+     * @return {Partial<UserSchema>}
      */
-    public partial(user: IUserModel, fields: UserField[]): Partial<IUserModel> {
+    public partial(user: UserSchema, fields: UserField[]): Partial<UserSchema> {
         const obj = {};
         fields.forEach(field => obj[field] = user[field]);
         return obj;

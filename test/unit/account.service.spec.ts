@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { AccountService } from '../../lib';
-import { UnexpectedResponse, UserFieldRequired } from '../../lib/error';
 import { Gender } from '../../lib/models/gender.model';
-import { Role } from '../../lib/models/role.model';
 import { UserSchema } from '../../lib/models/user';
 import { userFields } from '../../lib/models/user.model';
 import { UserGenerator } from '../data/data';
 import { MockGraphQLClient } from './mock.client';
+import { readFileSync } from 'fs';
+import { IDBUserModel } from '../data/user.model';
 
 class ShouldNotSucceed extends Error {
     public name = 'ShouldNotSucceed';
@@ -21,7 +21,10 @@ class MethodCalled extends Error {
     }
 }
 
-describe('AccountService Unit Tests', () => {
+describe('AccountService Unit Tests', async () => {
+    const generator = new UserGenerator();
+    const USERS: IDBUserModel[] = JSON.parse(readFileSync(__dirname + '../data/valid.json', 'utf8'));
+    await generator.load(USERS);
 
     describe('buildUserFieldFragment', () => {
         it('should build', () => {
@@ -97,12 +100,11 @@ describe('AccountService Unit Tests', () => {
         });
 
         it('should add variables to request', async () => {
-            const generator = new UserGenerator();
             const mockUser = generator.get();
             const client = new MockGraphQLClient('', {}, {user: null});
             const service = new AccountService({url: '', client});
             await service.get({
-                id: mockUser._id,
+                id: mockUser.id,
                 email: mockUser.email,
                 username: mockUser.username
             }, ['_id']);
@@ -110,13 +112,12 @@ describe('AccountService Unit Tests', () => {
         });
 
         it('should return requested user', async () => {
-            const generator = new UserGenerator();
             const mockUser = generator.get();
             const client = new MockGraphQLClient('', {}, {user: mockUser});
             const service = new AccountService({url: '', client});
-            const user = await service.get({id: mockUser._id}) as UserSchema;
+            const user = await service.get({id: mockUser.id}) as UserSchema;
             expect(user).to.be.an('object');
-            expect(user.id).to.be.deep.eq(mockUser._id);
+            expect(user.id).to.be.deep.eq(mockUser.id);
             expect(user.active).to.be.eq(mockUser.active);
             if (mockUser.birthday !== null) {
                 expect(user.birthday).to.be.a('date');
@@ -222,7 +223,6 @@ describe('AccountService Unit Tests', () => {
         });
 
         it('should transform result to User object', async () => {
-            const generator = new UserGenerator();
             const mockUsers = generator.multiple(10);
             const client = new MockGraphQLClient('', {}, {
                 result: {
@@ -240,7 +240,7 @@ describe('AccountService Unit Tests', () => {
             expect(result).to.have.keys(['docs', 'total', 'limit', 'page', 'pages', 'offset']);
             expect(result.docs).to.be.an('array');
             expect(result.docs).to.have.lengthOf(10);
-            expect(result.docs.map(u => u.id)).to.deep.eq(mockUsers.map(u => u._id));
+            expect(result.docs.map(u => u.id)).to.deep.eq(mockUsers.map(u => u.id));
             expect(result.total).to.be.eq(10);
             expect(result.limit).to.be.eq(25);
             expect(result.page).to.be.eq(1);
@@ -307,7 +307,6 @@ describe('AccountService Unit Tests', () => {
         });
 
         it('should iterate', async () => {
-            const generator = new UserGenerator();
             const mockUsers = generator.multiple(25);
 
             class Client {
@@ -364,7 +363,7 @@ describe('AccountService Unit Tests', () => {
             expect(iterResult1.done).to.be.eq(false);
             expect(iterResult1.value).to.be.an('array');
             expect(iterResult1.value.map(u => u.id))
-                .to.be.deep.eq(mockUsers.slice(0, 10).map(u => u._id));
+                .to.be.deep.eq(mockUsers.slice(0, 10).map(u => u.id));
 
             const iterResult2 = await iterator.next();
             expect(iterResult2).to.be.an('object');
@@ -372,7 +371,7 @@ describe('AccountService Unit Tests', () => {
             expect(iterResult2.done).to.be.eq(false);
             expect(iterResult2.value).to.be.an('array');
             expect(iterResult2.value.map(u => u.id))
-                .to.be.deep.eq(mockUsers.slice(10, 20).map(u => u._id));
+                .to.be.deep.eq(mockUsers.slice(10, 20).map(u => u.id));
 
             const iterResult3 = await iterator.next();
             expect(iterResult3).to.be.an('object');
@@ -380,7 +379,7 @@ describe('AccountService Unit Tests', () => {
             expect(iterResult3.done).to.be.eq(true);
             expect(iterResult3.value).to.be.an('array');
             expect(iterResult3.value.map(u => u.id))
-                .to.be.deep.eq(mockUsers.slice(20).map(u => u._id));
+                .to.be.deep.eq(mockUsers.slice(20).map(u => u.id));
         });
     });
 });

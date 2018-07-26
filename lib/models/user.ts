@@ -10,7 +10,7 @@ import {
     ValidateIf,
     validateOrReject
 } from 'class-validator';
-import { UserFieldRequired, UserInvalid } from '../error';
+import { UserFieldRequired } from '../error';
 import { Validatable } from '../grapgql/validatable';
 import { Gender } from './gender.model';
 import { Role } from './role.model';
@@ -51,7 +51,7 @@ export class UserSchema extends Validatable implements Partial<IUser> {
     @IsIn([Gender.MALE, Gender.FEMALE, Gender.UNKNOWN])
     public gender?: Gender;
 
-    @ValidateIf(((object, value) => value !== null))
+    @ValidateIf(((object, value) => value !== undefined && value !== null))
     @IsDate()
     public birthday?: Date | null;
 
@@ -67,14 +67,15 @@ export class UserSchema extends Validatable implements Partial<IUser> {
     @IsDate()
     public updatedAt?: Date;
 
-    @ValidateIf(((object, value) => !!value))
+    @ValidateIf(((object, value) => value !== undefined && value !== null))
     @IsDate()
     public deletedAt?: Date | null;
 
+    @ValidateIf(((object, value) => value !== undefined))
     @IsBoolean()
     public deleted?: boolean;
 
-    @ValidateIf(((object, value) => !!value))
+    @ValidateIf(((object, value) => value !== undefined && value !== null))
     @IsDate()
     public lastLogin?: Date | null;
 
@@ -130,11 +131,6 @@ export const User = async (data: Partial<IUserModel>): Promise<UserSchema> => {
         }
     });
     const user = new UserSchema(createData);
-
-    try {
-        await user.validate();
-    } catch (e) {
-        throw new UserInvalid(e);
-    }
+    await user.validate();
     return user;
 };

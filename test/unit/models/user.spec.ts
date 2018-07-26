@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { UserFieldRequired, UserInvalid } from '../../../lib/error';
 import { Gender } from '../../../lib/models/gender.model';
 import { Role } from '../../../lib/models/role.model';
 import { User } from '../../../lib/models/user';
@@ -26,21 +25,15 @@ describe('User Schema Tests', () => {
                 await User({_id: '1'});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('id');
-                expect(e.errors[0].constraints).to.have.key('length');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('id', 'length')).to.be.eq(true);
             }
             try {
                 await User({_id: '1'.repeat(26)});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('id');
-                expect(e.errors[0].constraints).to.have.key('length');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('id', 'length')).to.be.eq(true);
             }
         });
 
@@ -56,33 +49,24 @@ describe('User Schema Tests', () => {
                 await User({username: 'a'});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('username');
-                expect(e.errors[0].constraints).to.have.key('length');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('username', 'length')).to.be.eq(true);
             }
 
             try {
                 await User({username: 'asdASsdasd'});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('username');
-                expect(e.errors[0].constraints).to.have.key('isLowercase');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('username', 'isLowercase')).to.be.eq(true);
             }
 
             try {
                 await User({username: 'asd-sdasd'});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('username');
-                expect(e.errors[0].constraints).to.have.key('isAlphanumeric');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('username', 'isAlphanumeric')).to.be.eq(true);
             }
         });
 
@@ -98,44 +82,32 @@ describe('User Schema Tests', () => {
                 await User({firstName: 'a'});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('firstName');
-                expect(e.errors[0].constraints).to.have.key('length');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('firstName', 'length')).to.be.eq(true);
             }
 
             try {
                 await User({firstName: 'a'.repeat(33)});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('firstName');
-                expect(e.errors[0].constraints).to.have.key('length');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('firstName', 'length')).to.be.eq(true);
             }
 
             try {
                 await User({firstName: 1234} as any);
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('firstName');
-                expect(e.errors[0].constraints).to.have.keys(['isString', 'matches', 'length']);
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('firstName', 'isString')).to.be.eq(true);
             }
 
             try {
                 await User({firstName: 'asd123'});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('firstName');
-                expect(e.errors[0].constraints).to.have.key('matches');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('firstName', 'matches')).to.be.eq(true);
             }
         });
 
@@ -151,44 +123,32 @@ describe('User Schema Tests', () => {
                 await User({lastName: 'a'});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('lastName');
-                expect(e.errors[0].constraints).to.have.key('length');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('lastName', 'length')).to.be.eq(true);
             }
 
             try {
                 await User({lastName: 'a'.repeat(33)});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('lastName');
-                expect(e.errors[0].constraints).to.have.key('length');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('lastName', 'length')).to.be.eq(true);
             }
 
             try {
                 await User({lastName: 1234} as any);
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('lastName');
-                expect(e.errors[0].constraints).to.have.keys(['isString', 'matches', 'length']);
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('lastName', 'isString')).to.be.eq(true);
             }
 
             try {
                 await User({lastName: 'asd123'});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('lastName');
-                expect(e.errors[0].constraints).to.have.key('matches');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('lastName', 'matches')).to.be.eq(true);
             }
         });
 
@@ -204,11 +164,8 @@ describe('User Schema Tests', () => {
                 await User({role: 'a'} as any);
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('role');
-                expect(e.errors[0].constraints).to.have.key('isIn');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('role', 'isIn')).to.be.eq(true);
             }
         });
 
@@ -236,11 +193,8 @@ describe('User Schema Tests', () => {
                 await User({gender: 'a'} as any);
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('gender');
-                expect(e.errors[0].constraints).to.have.key('isIn');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('gender', 'isIn')).to.be.eq(true);
             }
         });
 
@@ -262,11 +216,8 @@ describe('User Schema Tests', () => {
                 await User({birthday: 'asd'} as any);
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('birthday');
-                expect(e.errors[0].constraints).to.have.key('isDate');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('birthday', 'isDate')).to.be.eq(true);
             }
         });
 
@@ -277,7 +228,7 @@ describe('User Schema Tests', () => {
             const user2 = await User({birthday: '2018-06-26T15:30:46.151Z'} as any);
             expect(user2.birthday).to.be.a('date');
 
-            const user3 = await User({birthday: new Date()});
+            const user3 = await User({birthday: new Date() as any});
             expect(user3.birthday).to.be.a('date');
         });
     });
@@ -288,22 +239,16 @@ describe('User Schema Tests', () => {
                 await User({active: 'asd'} as any);
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('active');
-                expect(e.errors[0].constraints).to.have.key('isBoolean');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('active', 'isBoolean')).to.be.eq(true);
             }
 
             try {
                 await User({active: 0} as any);
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('active');
-                expect(e.errors[0].constraints).to.have.key('isBoolean');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('active', 'isBoolean')).to.be.eq(true);
             }
         });
 
@@ -322,22 +267,16 @@ describe('User Schema Tests', () => {
                 await User({createdAt: 'asd'} as any);
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('createdAt');
-                expect(e.errors[0].constraints).to.have.key('isDate');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('createdAt', 'isDate')).to.be.eq(true);
             }
 
             try {
-                await User({createdAt: new Date('Invalid Date')});
+                await User({createdAt: new Date('Invalid Date') as any});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('createdAt');
-                expect(e.errors[0].constraints).to.have.key('isDate');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('createdAt', 'isDate')).to.be.eq(true);
             }
         });
 
@@ -345,7 +284,7 @@ describe('User Schema Tests', () => {
             const user1 = await User({createdAt: '2018-06-26T15:30:46.151Z'} as any);
             expect(user1.createdAt).to.be.a('date');
 
-            const user2 = await User({createdAt: new Date()});
+            const user2 = await User({createdAt: new Date() as any});
             expect(user2.createdAt).to.be.a('date');
         });
     });
@@ -356,22 +295,16 @@ describe('User Schema Tests', () => {
                 await User({updatedAt: 'asd'} as any);
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('updatedAt');
-                expect(e.errors[0].constraints).to.have.key('isDate');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('updatedAt', 'isDate')).to.be.eq(true);
             }
 
             try {
-                await User({updatedAt: new Date('Invalid Date')});
+                await User({updatedAt: new Date('Invalid Date') as any});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('updatedAt');
-                expect(e.errors[0].constraints).to.have.key('isDate');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('updatedAt', 'isDate')).to.be.eq(true);
             }
         });
 
@@ -379,7 +312,7 @@ describe('User Schema Tests', () => {
             const user1 = await User({updatedAt: '2018-06-26T15:30:46.151Z'} as any);
             expect(user1.updatedAt).to.be.a('date');
 
-            const user2 = await User({updatedAt: new Date()});
+            const user2 = await User({updatedAt: new Date() as any});
             expect(user2.updatedAt).to.be.a('date');
         });
     });
@@ -390,22 +323,16 @@ describe('User Schema Tests', () => {
                 await User({deletedAt: 'asd'} as any);
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('deletedAt');
-                expect(e.errors[0].constraints).to.have.key('isDate');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('deletedAt', 'isDate')).to.be.eq(true);
             }
 
             try {
-                await User({deletedAt: new Date('Invalid Date')});
+                await User({deletedAt: new Date('Invalid Date') as any});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('deletedAt');
-                expect(e.errors[0].constraints).to.have.key('isDate');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('deletedAt', 'isDate')).to.be.eq(true);
             }
         });
 
@@ -413,7 +340,7 @@ describe('User Schema Tests', () => {
             const user1 = await User({deletedAt: '2018-06-26T15:30:46.151Z'} as any);
             expect(user1.deletedAt).to.be.a('date');
 
-            const user2 = await User({deletedAt: new Date()});
+            const user2 = await User({deletedAt: new Date() as any});
             expect(user2.deletedAt).to.be.a('date');
 
             const user3 = await User({deletedAt: null});
@@ -427,11 +354,8 @@ describe('User Schema Tests', () => {
                 await User({deleted: 'asd'} as any);
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('deleted');
-                expect(e.errors[0].constraints).to.have.key('isBoolean');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('deleted', 'isBoolean')).to.be.eq(true);
             }
         });
 
@@ -451,22 +375,16 @@ describe('User Schema Tests', () => {
                 await User({lastLogin: 'asd'} as any);
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('lastLogin');
-                expect(e.errors[0].constraints).to.have.key('isDate');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('lastLogin', 'isDate')).to.be.eq(true);
             }
 
             try {
-                await User({lastLogin: new Date('Invalid Date')});
+                await User({lastLogin: new Date('Invalid Date') as any});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('lastLogin');
-                expect(e.errors[0].constraints).to.have.key('isDate');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('lastLogin', 'isDate')).to.be.eq(true);
             }
         });
 
@@ -474,7 +392,7 @@ describe('User Schema Tests', () => {
             const user1 = await User({lastLogin: '2018-06-26T15:30:46.151Z'} as any);
             expect(user1.lastLogin).to.be.a('date');
 
-            const user2 = await User({lastLogin: new Date()});
+            const user2 = await User({lastLogin: new Date() as any});
             expect(user2.lastLogin).to.be.a('date');
 
             const user3 = await User({lastLogin: null});
@@ -488,44 +406,32 @@ describe('User Schema Tests', () => {
                 await User({groups: 'asd'} as any);
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('groups');
-                expect(e.errors[0].constraints).to.have.key('isArray');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('groups', 'isArray')).to.be.eq(true);
             }
 
             try {
                 await User({groups: ['a'.repeat(3)]});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('groups');
-                expect(e.errors[0].constraints).to.have.key('length');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('groups', 'length')).to.be.eq(true);
             }
 
             try {
                 await User({groups: ['a'.repeat(26)]});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('groups');
-                expect(e.errors[0].constraints).to.have.key('length');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('groups', 'length')).to.be.eq(true);
             }
 
             try {
                 await User({groups: ['a'.repeat(24), 'b']});
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('UserInvalid');
-                expect(e.errors).to.be.an('array');
-                expect(e.errors.length).to.be.eq(1);
-                expect(e.errors[0].property).to.be.eq('groups');
-                expect(e.errors[0].constraints).to.have.key('length');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('groups', 'length')).to.be.eq(true);
             }
         });
 
