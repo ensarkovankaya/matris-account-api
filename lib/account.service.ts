@@ -5,6 +5,7 @@ import { ArgumentRequired, NotUserField, UnexpectedResponse, UserFieldRequired }
 import { GetArgs } from './grapgql/args/get.args';
 import { CreateInput } from './grapgql/inputs/create.input';
 import { FilterInput } from './grapgql/inputs/filter.input';
+import { IDInput } from './grapgql/inputs/id.input';
 import { PaginationInput } from './grapgql/inputs/pagination.input';
 import { UpdateInput } from './grapgql/inputs/update.input';
 import { IGetArgs } from './grapgql/models/args.model';
@@ -195,6 +196,7 @@ export class AccountService extends BaseService {
         data: IUpdateInputModel,
         fields: UserField[] = userFields
     ): Promise<Partial<UserSchema>> {
+        await new IDInput(id).validate();
         await new UpdateInput(data).validate();
         try {
             // Get Fragment
