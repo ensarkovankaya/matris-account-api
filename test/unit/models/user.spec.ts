@@ -9,7 +9,7 @@ class ShouldNotSucceed extends Error {
     public message = 'This test should not be succeed';
 }
 
-describe('User Schema Tests', () => {
+describe('GraphQL -> Models -> User', () => {
     it('should raise UserFieldRequired when empty init', async () => {
         try {
             await User({});

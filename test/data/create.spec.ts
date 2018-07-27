@@ -6,7 +6,7 @@ import { readFileSync } from 'fs';
 
 const inputs: ICreateInputModel[] = JSON.parse(readFileSync(__dirname + '/valid/create_data.json', 'utf8'));
 
-describe('CreateInputData', () => {
+describe('Data -> CreateInputData', () => {
     it('should load and validate data', async () => {
         await new CreateInputData().load(inputs);
     })

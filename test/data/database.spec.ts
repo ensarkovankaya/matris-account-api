@@ -19,7 +19,7 @@ before('Loading Database', async () => {
     }
 });
 
-describe('Database', () => {
+describe('Data -> Database', () => {
     it('should get one valid user', async () => {
         const user = database.get();
         expect(user).to.be.an('object');

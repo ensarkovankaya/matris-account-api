@@ -6,7 +6,7 @@ import { UpdateInputData } from './update';
 
 const inputs: IUpdateInputModel[] = JSON.parse(readFileSync(__dirname + '/valid/update_data.json', 'utf8'));
 
-describe('UpdateInputData', () => {
+describe('Data -> UpdateInputData', () => {
     it('should load and validate data', async () => {
         await new UpdateInputData().load(inputs);
     });

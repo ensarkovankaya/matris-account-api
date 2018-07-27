@@ -8,7 +8,7 @@ class ShouldNotSucceed extends Error {
     public name = 'ShouldNotSucceed';
 }
 
-describe('CreateInput', () => {
+describe('GraphQL -> Inputs -> CreateInput', () => {
     it('should raise validation error for required fields', async () => {
         try {
             await new CreateInput({} as any).validate();

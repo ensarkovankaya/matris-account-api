@@ -6,7 +6,7 @@ class ShouldNotSucceed extends Error {
     public name = 'ShouldNotSucceed';
 }
 
-describe('PaginationInput', () => {
+describe('GraphQL -> Inputs -> PaginationInput', () => {
     it('should init empty', async () => {
         const input = new PaginationInput();
         await input.validate();

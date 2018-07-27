@@ -6,7 +6,7 @@ class ShouldNotSucceed extends Error {
     public name = 'ShouldNotSucceed';
 }
 
-describe('GetArgs', () => {
+describe('GraphQL -> Args -> GetArgs', () => {
     it('should init empty', async () => {
         const args = new GetArgs({});
         await args.validate();

@@ -30,7 +30,7 @@ class MethodCalled extends Error {
     }
 }
 
-describe('AccountService Unit Tests', async () => {
+describe('GraphQL -> Services -> AccountService', async () => {
 
     describe('buildUserFieldFragment', () => {
         it('should build', () => {

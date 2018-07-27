@@ -7,7 +7,7 @@ class ShouldNotSucceed extends Error {
     public name = 'ShouldNotSucceed';
 }
 
-describe('FilterInput', () => {
+describe('GraphQL -> Inputs -> FilterInput', () => {
     it('should validate empty', async () => {
         const args = new FilterInput({});
         await args.validate();
