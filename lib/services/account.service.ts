@@ -81,7 +81,7 @@ export class AccountService extends BaseService {
 
     /**
      * Make one find call with given filters returns one page of data
-     * @param {IUserFilterModel} filter
+     * @param {IUserFilterModel} filters
      * @param {UserField[]} fields
      * @param {IPaginationOptions} pagination
      * @return {Promise<IPaginateResult<Partial<UserSchema>>>}

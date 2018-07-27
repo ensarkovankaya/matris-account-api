@@ -9,7 +9,7 @@ class ShouldNotSucceed extends Error {
 
 describe('FilterInput', () => {
     it('should validate empty', async () => {
-        const args = new FilterInput();
+        const args = new FilterInput({});
         await args.validate();
         expect(args).to.be.deep.eq({});
     });

@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { CreateInput } from '../../../../lib/grapgql/inputs/create.input';
-import { Role } from '../../../../lib/models/role.model';
 import { Gender } from '../../../../lib/models/gender.model';
+import { Role } from '../../../../lib/models/role.model';
 
 class ShouldNotSucceed extends Error {
     public name = 'ShouldNotSucceed';

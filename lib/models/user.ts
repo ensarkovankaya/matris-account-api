@@ -7,8 +7,7 @@ import {
     IsIn, IsLowercase,
     IsString,
     Length, Matches,
-    ValidateIf,
-    validateOrReject
+    ValidateIf
 } from 'class-validator';
 import { UserFieldRequired } from '../error';
 import { Validatable } from '../grapgql/validatable';
