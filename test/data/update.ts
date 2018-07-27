@@ -13,7 +13,6 @@ export class UpdateInputData extends DataSource {
 
     public async load(data: IUpdateInputModel[], validate: boolean = true) {
         try {
-            console.log('Data validating');
             if (validate) {
                 await Promise.all(data.map(d => new UpdateInput(d).validate()));
             }

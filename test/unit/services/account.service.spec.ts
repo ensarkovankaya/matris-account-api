@@ -527,7 +527,6 @@ describe('AccountService Unit Tests', async () => {
                 } as any);
                 throw new ShouldNotSucceed();
             } catch (e) {
-                console.log(e);
                 expect(e.name).to.be.eq('ArgumentValidationError');
                 expect(e.hasError('email')).to.be.eq(true);
                 expect(e.hasError('firstName')).to.be.eq(true);

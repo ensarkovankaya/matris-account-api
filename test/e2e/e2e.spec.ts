@@ -318,12 +318,7 @@ describe('E2E', async () => {
             }
             const inputs = createData.multiple(10);
             for (const data of inputs) {
-                try {
-                    await createUser(data);
-                } catch(e) {
-                    console.log('User creation failed', e);
-                    throw e;
-                }
+                await createUser(data);
             }
         }).timeout(5000);
 
@@ -367,64 +362,54 @@ describe('E2E', async () => {
 
     describe('Find', () => {
         it('should return deleted admins', async () => {
-            try {
-                const filter: IUserFilterModel = {role: {eq: Role.ADMIN}, deleted: true};
-                const pagination: IPaginationOptions = {limit: 100};
-                const mockUsers = database.filter(filter);
-                const expectedResult = database.paginate(mockUsers, pagination);
-                const result = await service.find(filter, userFields, pagination);
-                expect(result).to.be.an('object');
-                expect(result).to.have.keys(['docs', 'total', 'limit', 'page', 'pages', 'offset']);
-                expect(result.total).to.be.eq(expectedResult.total);
-                expect(result.page).to.be.eq(expectedResult.page);
-                expect(result.pages).to.be.eq(expectedResult.pages);
-                expect(result.offset).to.be.eq(expectedResult.offset);
-                expect(result.docs).to.be.an('array');
-                expect(result.docs).to.have.lengthOf(expectedResult.docs.length);
-                for (const user of result.docs) {
-                    expect(user).to.be.an('object');
-                    expect(user).to.have.keys(['id', 'email', 'firstName', 'lastName', 'username', 'createdAt',
-                        'updatedAt', 'deletedAt', 'deleted', 'role', 'lastLogin', 'gender', 'active', 'birthday',
-                        'groups']);
-                }
-                expect(result.docs.map(u => u.id).sort()).to.be.deep.eq(expectedResult.docs.map(u => u._id).sort());
-            } catch (e) {
-                console.log(e);
-                throw e;
+            const filter: IUserFilterModel = {role: {eq: Role.ADMIN}, deleted: true};
+            const pagination: IPaginationOptions = {limit: 100};
+            const mockUsers = database.filter(filter);
+            const expectedResult = database.paginate(mockUsers, pagination);
+            const result = await service.find(filter, userFields, pagination);
+            expect(result).to.be.an('object');
+            expect(result).to.have.keys(['docs', 'total', 'limit', 'page', 'pages', 'offset']);
+            expect(result.total).to.be.eq(expectedResult.total);
+            expect(result.page).to.be.eq(expectedResult.page);
+            expect(result.pages).to.be.eq(expectedResult.pages);
+            expect(result.offset).to.be.eq(expectedResult.offset);
+            expect(result.docs).to.be.an('array');
+            expect(result.docs).to.have.lengthOf(expectedResult.docs.length);
+            for (const user of result.docs) {
+                expect(user).to.be.an('object');
+                expect(user).to.have.keys(['id', 'email', 'firstName', 'lastName', 'username', 'createdAt',
+                    'updatedAt', 'deletedAt', 'deleted', 'role', 'lastLogin', 'gender', 'active', 'birthday',
+                    'groups']);
             }
+            expect(result.docs.map(u => u.id).sort()).to.be.deep.eq(expectedResult.docs.map(u => u._id).sort());
         });
 
         it('should return not active female instructors', async () => {
-            try {
-                const filter: IUserFilterModel = {
-                    role: {eq: Role.INSTRUCTOR},
-                    gender: {eq: Gender.FEMALE},
-                    active: false
-                };
-                const pagination: IPaginationOptions = {limit: 100};
-                const mockUsers = database.filter(filter);
-                const expectedResult = database.paginate(mockUsers, pagination);
-                const result = await service.find(filter, userFields, pagination);
-                expect(result).to.be.an('object');
-                expect(result).to.have.keys(['docs', 'total', 'limit', 'page', 'pages', 'offset']);
-                expect(result.total).to.be.eq(expectedResult.total);
-                expect(result.page).to.be.eq(expectedResult.page);
-                expect(result.pages).to.be.eq(expectedResult.pages);
-                expect(result.offset).to.be.eq(expectedResult.offset);
-                expect(result.docs).to.be.an('array');
-                expect(result.docs).to.have.lengthOf(expectedResult.docs.length);
-                for (const user of result.docs) {
-                    expect(user).to.be.an('object');
-                    expect(user).to.have.keys(['id', 'email', 'firstName', 'lastName', 'username',
-                        'createdAt', 'updatedAt', 'deletedAt', 'deleted', 'role', 'lastLogin', 'gender', 'active',
-                        'birthday', 'groups'
-                    ]);
-                }
-                expect(result.docs.map(u => u.id).sort()).to.be.deep.eq(expectedResult.docs.map(u => u._id).sort());
-            } catch (e) {
-                console.log(e);
-                throw e;
+            const filter: IUserFilterModel = {
+                role: {eq: Role.INSTRUCTOR},
+                gender: {eq: Gender.FEMALE},
+                active: false
+            };
+            const pagination: IPaginationOptions = {limit: 100};
+            const mockUsers = database.filter(filter);
+            const expectedResult = database.paginate(mockUsers, pagination);
+            const result = await service.find(filter, userFields, pagination);
+            expect(result).to.be.an('object');
+            expect(result).to.have.keys(['docs', 'total', 'limit', 'page', 'pages', 'offset']);
+            expect(result.total).to.be.eq(expectedResult.total);
+            expect(result.page).to.be.eq(expectedResult.page);
+            expect(result.pages).to.be.eq(expectedResult.pages);
+            expect(result.offset).to.be.eq(expectedResult.offset);
+            expect(result.docs).to.be.an('array');
+            expect(result.docs).to.have.lengthOf(expectedResult.docs.length);
+            for (const user of result.docs) {
+                expect(user).to.be.an('object');
+                expect(user).to.have.keys(['id', 'email', 'firstName', 'lastName', 'username',
+                    'createdAt', 'updatedAt', 'deletedAt', 'deleted', 'role', 'lastLogin', 'gender', 'active',
+                    'birthday', 'groups'
+                ]);
             }
+            expect(result.docs.map(u => u.id).sort()).to.be.deep.eq(expectedResult.docs.map(u => u._id).sort());
         });
     });
 });

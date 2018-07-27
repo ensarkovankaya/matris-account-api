@@ -13,7 +13,6 @@ export class CreateInputData extends DataSource {
 
     public async load(data: ICreateInputModel[], validate: boolean = true) {
         try {
-            console.log('Data validating');
             if (validate) {
                 await Promise.all(data.map(d => new CreateInput(d).validate()));
             }
