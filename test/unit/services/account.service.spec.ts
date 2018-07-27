@@ -375,7 +375,7 @@ describe('AccountService Unit Tests', async () => {
             expect(iterResult1.done).to.be.eq(false);
             expect(iterResult1.value).to.be.an('array');
             expect(iterResult1.value.map(u => u.id))
-                .to.be.deep.eq(mockUsers.slice(0, 10).map(u => u._id));
+            .to.be.deep.eq(mockUsers.slice(0, 10).map(u => u._id));
             
             const iterResult2 = await iterator.next();
             expect(iterResult2).to.be.an('object');
@@ -383,7 +383,7 @@ describe('AccountService Unit Tests', async () => {
             expect(iterResult2.done).to.be.eq(false);
             expect(iterResult2.value).to.be.an('array');
             expect(iterResult2.value.map(u => u.id))
-                .to.be.deep.eq(mockUsers.slice(10, 20).map(u => u._id));
+            .to.be.deep.eq(mockUsers.slice(10, 20).map(u => u._id));
             
             const iterResult3 = await iterator.next();
             expect(iterResult3).to.be.an('object');
@@ -391,7 +391,7 @@ describe('AccountService Unit Tests', async () => {
             expect(iterResult3.done).to.be.eq(true);
             expect(iterResult3.value).to.be.an('array');
             expect(iterResult3.value.map(u => u.id))
-                .to.be.deep.eq(mockUsers.slice(20).map(u => u._id));
+            .to.be.deep.eq(mockUsers.slice(20).map(u => u._id));
         });
     });
     
@@ -407,7 +407,7 @@ describe('AccountService Unit Tests', async () => {
                 expect(e.hasError('id')).to.be.eq(true);
             }
         });
-
+        
         it('should raise UnexpectedResponse', async () => {
             try {
                 const client = new MockGraphQLClient('', {}, {deleted: false});
@@ -418,7 +418,7 @@ describe('AccountService Unit Tests', async () => {
                 expect(e.name).to.be.eq('UnexpectedResponse');
             }
         });
-    
+        
         it('should call with query and variables', async () => {
             const client = new MockGraphQLClient('', {}, {deleted: true});
             const service = new AccountService({url: '', client});
@@ -427,7 +427,7 @@ describe('AccountService Unit Tests', async () => {
             expect(client.variables).to.be.deep.eq({id: '1'.repeat(24)});
         });
     });
-
+    
     describe('Create', () => {
         it('should raise ArgumentValidationError', async () => {
             try {
@@ -446,7 +446,7 @@ describe('AccountService Unit Tests', async () => {
                 expect(e.hasError('password')).to.be.eq(true);
             }
         });
-
+        
         it('should call with query and variables', async () => {
             const client = new MockGraphQLClient('', {}, {user: {
                 email: 'mail@mail.com',
@@ -472,7 +472,7 @@ describe('AccountService Unit Tests', async () => {
             expect(client.query).to.have.string('_id');
             expect(client.query).to.not.have.string('email');
         });
-
+        
         it('should raise UnexpectedResponse', async () => {
             try {
                 const client = new MockGraphQLClient('', {}, {key: 'value'});
@@ -483,6 +483,95 @@ describe('AccountService Unit Tests', async () => {
                     lastName: 'Last Name',
                     role: Role.ADMIN,
                     password: '12345678'
+                });
+                throw new ShouldNotSucceed();
+            } catch(e) {
+                expect(e.name).to.be.eq('UnexpectedResponse');
+            }
+        });
+    });
+    
+    describe('Update', () => {
+        it('should raise ArgumentValidationError for id', async () => {
+            try {
+                const client = new MockGraphQLClient('', {});
+                const service = new AccountService({url: '', client});
+                await service.update('id', {});
+                throw new ShouldNotSucceed();
+            } catch (e) {
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('id')).to.be.eq(true);
+            }
+        });
+        
+        it('should raise ArgumentValidationError for update data', async () => {
+            try {
+                const client = new MockGraphQLClient('', {});
+                const service = new AccountService({url: '', client});
+                await service.update('1'.repeat(24), {
+                    email: 'notamail',
+                    firstName: 'First1',
+                    lastName: 'Last-',
+                    role: 'asd',
+                    password: '123',
+                    username: 'USERNAME',
+                    active: 'a',
+                    gender: 'b',
+                    birthday: 'asd',
+                    groups: [123]
+                } as any);
+                throw new ShouldNotSucceed();
+            } catch (e) {
+                console.log(e);
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('email')).to.be.eq(true);
+                expect(e.hasError('firstName')).to.be.eq(true);
+                expect(e.hasError('lastName')).to.be.eq(true);
+                expect(e.hasError('role')).to.be.eq(true);
+                expect(e.hasError('password')).to.be.eq(true);
+                expect(e.hasError('username')).to.be.eq(true);
+                expect(e.hasError('active')).to.be.eq(true);
+                expect(e.hasError('gender')).to.be.eq(true);
+                expect(e.hasError('birthday')).to.be.eq(true);
+                expect(e.hasError('groups')).to.be.eq(true);
+            }
+        });
+        
+        it('should call with query and variables', async () => {
+            const client = new MockGraphQLClient('', {}, {user: {
+                email: 'mail@mail.com',
+                firstName: 'First Name',
+                lastName: 'Last Name',
+                role: Role.ADMIN
+            }});
+            const service = new AccountService({url: '', client});
+            await service.update('1'.repeat(24), {
+                email: 'mail@mail.com',
+                firstName: 'First Name',
+                lastName: 'Last Name',
+                role: Role.ADMIN,
+                password: '12345678',
+                extra: 'key'
+            } as any, ['_id']);
+            expect(client.variables).to.be.deep.eq({
+                id: '1'.repeat(24),
+                data: {
+                    email: 'mail@mail.com',
+                    firstName: 'First Name',
+                    lastName: 'Last Name',
+                    role: Role.ADMIN,
+                    password: '12345678'
+            }});
+            expect(client.query).to.have.string('_id');
+            expect(client.query).to.not.have.string('email');
+        });
+
+        it('should raise UnexpectedResponse', async () => {
+            try {
+                const client = new MockGraphQLClient('', {}, {not: 'validdata'});
+                const service = new AccountService({url: '', client});
+                await service.update('1'.repeat(24), {
+                    email: 'mail@mail.com'
                 });
                 throw new ShouldNotSucceed();
             } catch(e) {
