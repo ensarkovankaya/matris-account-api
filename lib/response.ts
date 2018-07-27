@@ -15,7 +15,7 @@ export class APIResponse<T> implements IAPIResponse<T> {
 
     public hasErrors(raise: boolean = false): boolean {
         const has = this.errors.length > 0;
-        if (raise) {
+        if (raise && has) {
             throw new APIError(this.errors);
         }
         return has;
