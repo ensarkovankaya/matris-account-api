@@ -2,50 +2,16 @@ import { ICompareNullableDateInput } from '../../lib/grapgql/models/compare.mode
 import { IPaginateResult, IPaginationOptions } from '../../lib/grapgql/models/pagination.model';
 import { User } from '../../lib/models/user';
 import { IUserFilterModel } from '../../lib/models/user.filter.model';
-import { IUserModel, UserField } from '../../lib/models/user.model';
-import { IDBUserModel } from './user.model';
+import { IUserModel } from '../../lib/models/user.model';
+import { DataSource } from './base';
+import { IDBUserModel } from './database.data.model';
 
-/**
- * Shuffles array in place. ES6 version
- * @param {Array} array: Array containing the items.
- */
-const shuffle = (array: any[]) => {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-};
-
-/**
- * Makes random choice from array
- * @param {any[]} choices
- * @return {any}
- */
-const choose = <T>(choices: T[]): T => {
-    if (choices.length === 0) {
-        throw new Error('Array is empty');
-    }
-    const index = Math.floor(Math.random() * choices.length);
-    return choices[index];
-};
-
-export interface IUserFilter {
-    role?: string;
-    gender?: string;
-    deleted?: boolean;
-    active?: boolean;
-}
-
-export interface IMultipleFilter extends IUserFilter {
-    shuffle?: boolean;
-}
-
-export class Database {
+export class Database extends DataSource {
 
     private users: IDBUserModel[];
 
     constructor() {
+        super();
         this.users = [];
     }
 
@@ -61,57 +27,28 @@ export class Database {
         }
     }
     /**
-     * Returns one valid user data
-     * @param {IUserFilter} filter
+     * Returns random one valid user data
+     * @param {IUserFilterModel} filter
      * @return {IUserModel}
      */
-    public get(filter: IUserFilter = {}): IUserModel {
-        let filtered = this.users.slice();
-        if (filter.role) {
-            filtered = filtered.filter(u => u.role === filter.role);
-        }
-        if (filter.gender) {
-            filtered = filtered.filter(u => u.gender === filter.gender);
-        }
-        if (typeof filter.deleted === 'boolean') {
-            filtered = filtered.filter(u => u.deleted === filter.deleted);
-        }
-        if (typeof filter.active === 'boolean') {
-            filtered = filtered.filter(u => u.active === filter.active);
-        }
+    public get(filter: IUserFilterModel = {}): IUserModel {
+        const filtered = this._filter(this.users.slice(), filter);
         if (filtered.length === 0) {
             throw new Error('User not exists');
         }
-        return choose<IUserModel>(filtered);
+        return this.choose<IUserModel>(this.shuffle<IUserModel>(filtered.slice()));
     }
 
     /**
      * Returns multiple valid user data
      * @param {number} limit
-     * @param {IMultipleFilter} filter
+     * @param {IUserFilterModel} filter
+     * @param {boolean} shuffle: Shuffle results
      * @return {IUserModel[]}
      */
-    public multiple(limit: number, filter: IMultipleFilter = {}): IUserModel[] {
-        const users: IUserModel[] = [];
-        while (users.length < limit) {
-            const chosen = this.get(filter);
-            if (!users.find(u => u._id === chosen._id)) {
-                users.push(chosen);
-            }
-        }
-        return filter.shuffle ? shuffle(users) : users;
-    }
-
-    /**
-     * Generates partial user. Returns new user object which have only given fields.
-     * @param {UserSchema} user
-     * @param {UserField[]} fields
-     * @return {Partial<IUserModel>}
-     */
-    public partial(user: IUserModel, fields: UserField[]): Partial<IUserModel> {
-        const obj = {};
-        fields.forEach(field => obj[field] = user[field]);
-        return obj;
+    public multiple(limit: number, filter: IUserFilterModel = {}, shuffle: boolean = false): IUserModel[] {
+        const filtered = this._filter(this.users.slice(), filter).slice(0, limit);
+        return shuffle ? this.shuffle<IUserModel>(filtered) : filtered;
     }
 
     public paginate(data: IUserModel[], pagination: IPaginationOptions): IPaginateResult<IUserModel> {

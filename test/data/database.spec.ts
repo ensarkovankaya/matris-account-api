@@ -1,14 +1,22 @@
 import { expect } from 'chai';
 import { before, describe, it } from 'mocha';
-import { Database } from './database';
-import { IDBUserModel } from './user.model';
+import { Database } from './database.data';
 import { readFileSync } from 'fs';
+import { Role } from '../../lib/models/role.model';
+import { Gender } from '../../lib/models/gender.model';
+import { IDBUserModel } from './database.data.model';
 
-const database = new Database();
+let database: Database;
 
 before('Loading Database', async () => {
-    const USERS: IDBUserModel[] = JSON.parse(readFileSync(__dirname + '/../data/database.json', 'utf8'));
-    await database.load(USERS);
+    try {
+        const USERS: IDBUserModel[] = JSON.parse(readFileSync(__dirname + '/../data/database.json', 'utf8'));
+        database = new Database();
+        await database.load(USERS);
+    } catch (e) {
+        console.log('Loading Data Failed', e);
+        throw e;
+    }
 });
 
 describe('Database', () => {
@@ -38,7 +46,7 @@ describe('Database', () => {
         }
     });
     it('should get one valid user with filter', () => {
-        const user = database.get({role: 'ADMIN', gender: 'MALE'});
+        const user = database.get({role: {eq: Role.ADMIN}, gender: {eq: Gender.MALE}});
         expect(user).to.be.an('object');
         expect(user._id).to.be.a('string');
         expect(user.username).to.be.a('string');
@@ -68,7 +76,7 @@ describe('Database', () => {
         expect(users[0]).to.be.not.deep.eq(users[1]);
     });
     it('should get multiple users with filter', () => {
-        const users = database.multiple(2, {gender: 'MALE', role: 'STUDENT'});
+        const users = database.multiple(2, {gender: {eq: Gender.MALE}, role: {eq: Role.STUDENT}});
         expect(users).to.have.lengthOf(2);
         expect(users[0]).to.be.not.deep.eq(users[1]);
         
