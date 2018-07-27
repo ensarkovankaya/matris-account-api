@@ -28,7 +28,7 @@ export const IsInDateRange = (minDate: Date, maxDate: Date, validationOptions?: 
                     }
                     const date = new Date(value);
                     if (date.toString() === 'Invalid Date') {
-                        throw new InvalidDate();
+                        return false;
                     }
                     return date >= minDate && date <= maxDate;
                 },

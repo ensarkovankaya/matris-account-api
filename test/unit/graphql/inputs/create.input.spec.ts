@@ -422,7 +422,8 @@ describe('CreateInput', () => {
                 await new CreateInput({birthday: new Date('asd')} as any).validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('InvalidDate');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('birthday', 'isDateLike')).to.be.eq(true);
             }
 
             try {

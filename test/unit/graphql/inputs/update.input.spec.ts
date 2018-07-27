@@ -151,7 +151,7 @@ describe('UpdateInput', () => {
         
         it('should raise ValidationError', async () => {
             try {
-                await new UpdateInput({role: 'NotARole'}).validate();
+                await new UpdateInput({role: 'NotARole'} as any).validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
                 expect(e.name).to.be.eq('ArgumentValidationError');
@@ -250,7 +250,7 @@ describe('UpdateInput', () => {
         
         it('should raise ValidationError', async () => {
             try {
-                await new UpdateInput({active: 'asd'}).validate();
+                await new UpdateInput({active: 'asd'} as any).validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
                 expect(e.name).to.be.eq('ArgumentValidationError');
@@ -271,7 +271,7 @@ describe('UpdateInput', () => {
             expect(input2.gender).to.be.eq('FEMALE');
             await input2.validate();
             
-            const input3 = new UpdateInput({gender: 'UNKNOWN'});
+            const input3 = new UpdateInput({gender: Gender.UNKNOWN});
             expect(input3).to.have.keys(['gender']);
             expect(input3.gender).to.be.eq('UNKNOWN');
             await input3.validate();
@@ -279,7 +279,7 @@ describe('UpdateInput', () => {
         
         it('should raise ValidationError', async () => {
             try {
-                await new UpdateInput({gender: 'asd'}).validate();
+                await new UpdateInput({gender: 'asd'} as any).validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
                 expect(e.name).to.be.eq('ArgumentValidationError');
@@ -304,7 +304,8 @@ describe('UpdateInput', () => {
                 await new UpdateInput({birthday: new Date('asd')}).validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
-                expect(e.name).to.be.eq('InvalidDate');
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('birthday', 'isDateLike')).to.be.eq(true);
             }
             
             try {
@@ -340,7 +341,7 @@ describe('UpdateInput', () => {
         
         it('should raise ValidationError', async () => {
             try {
-                await new UpdateInput({groups: 'asd'}).validate();
+                await new UpdateInput({groups: 'asd'} as any).validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
                 expect(e.name).to.be.eq('ArgumentValidationError');
