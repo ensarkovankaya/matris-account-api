@@ -19,14 +19,14 @@
     "url": "git+https://github.com/ensarkovankaya/matris-account-api.git"
   },
   "dependencies": {
-    "class-validator": "^0.8.5",
-    "graphql-request": "^1.6.0"
+    "class-validator": "^0.9.1",
+    "graphql-request": "^1.7.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",
     "@types/express": "^4.16.0",
     "@types/mocha": "^5.2.5",
-    "@types/node": "^10.5.2",
+    "@types/node": "^10.5.3",
     "chai": "^4.1.2",
     "express": "^4.16.3",
     "matris-logger": "^1.1.4",
