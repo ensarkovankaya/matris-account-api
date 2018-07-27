@@ -20,11 +20,11 @@ export class CreateInput extends Validatable {
     @IsEmail({}, {message: 'InvalidEmail'})
     public email: string | undefined;
 
-    @Matches(new RegExp('^[a-zA-Z ]+$', 'g'), {message: 'InvalidFirstName'})
+    @Matches(new RegExp('^[a-zA-Z ]+$'), {message: 'InvalidFirstName'})
     @Length(2, 32, {message: 'InvalidLength'})
     public firstName: string | undefined;
 
-    @Matches(new RegExp('^[a-zA-Z ]+$', 'g'), {message: 'InvalidLastName'})
+    @Matches(new RegExp('^[a-zA-Z ]+$'), {message: 'InvalidLastName'})
     @Length(2, 32, {message: 'InvalidLength'})
     public lastName: string | undefined;
 
