@@ -579,4 +579,37 @@ describe('AccountService Unit Tests', async () => {
             }
         });
     });
+
+    describe('Delete', () => {
+        it('should raise ArgumentValidationError for id', async () => {
+            try {
+                const client = new MockGraphQLClient('', {});
+                const service = new AccountService({url: '', client});
+                await service.delete('id');
+                throw new ShouldNotSucceed();
+            } catch (e) {
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('id')).to.be.eq(true);
+            }
+        });
+
+        it('should call with query and variables', async () => {
+            const client = new MockGraphQLClient('', {}, {deleted: true});
+            const service = new AccountService({url: '', client});
+            await service.delete('1'.repeat(24));
+            expect(client.variables).to.be.deep.eq({id: '1'.repeat(24)});
+            expect(client.query).to.be.eq('mutation deleteUser($id: String!) {deleted: delete(id: $id)}');
+        });
+
+        it('should raise UnexpectedResponse', async () => {
+            try {
+                const client = new MockGraphQLClient('', {}, {deleted: false});
+                const service = new AccountService({url: '', client});
+                await service.delete('1'.repeat(24));
+                throw new ShouldNotSucceed();
+            } catch(e) {
+                expect(e.name).to.be.eq('UnexpectedResponse');
+            }
+        });
+    });
 });
