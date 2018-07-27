@@ -6,7 +6,7 @@ import { readFileSync } from 'fs';
 
 const database = new Database();
 
-before('Load Data', async () => {
+before('Loading Database', async () => {
     const USERS: IDBUserModel[] = JSON.parse(readFileSync(__dirname + '/../data/database.json', 'utf8'));
     await database.load(USERS);
 });
