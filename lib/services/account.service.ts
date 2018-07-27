@@ -229,13 +229,13 @@ export class AccountService extends BaseService {
         await new IDInput(id).validate();
         try {
             // Build query
-            const query = `mutation deleteUser($id: String!) {deleted: delete(id: $id)}`;
-            const response = await this.call<{ deleted: true }>(query, {id});
+            const query = 'mutation deleteUser($id: String!) {deleted: delete(id: $id)}';
+            const response = await this.call<{deleted: true}>(query, {id});
             this.debug('Delete', {response});
 
             response.raise();
 
-            if (!response.data || !response.data.deleted) {
+            if (!response.data || response.data.deleted !== true) {
                 throw new UnexpectedResponse();
             }
         } catch (e) {
