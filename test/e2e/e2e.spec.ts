@@ -12,7 +12,6 @@ import { Database } from '../data/database.data';
 import { IDBUserModel } from '../data/database.data.model';
 import { ICreateInputModel } from '../../lib/grapgql/models/create.input.model';
 import { CreateInputData } from '../data/create';
-import { CreateInput } from '../../lib/grapgql/inputs/create.input';
 
 const URL = process.env.URL || 'http://localhost:3000/graphql';
 const rootLogger = new RootLogger({level: 'debug'});
