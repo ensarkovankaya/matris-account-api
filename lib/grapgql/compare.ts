@@ -43,7 +43,7 @@ export class CompareNumberInput extends Validatable implements ICompareNumberInp
     public lte?: number;
 
     constructor(data: ICompareNumberInput = {}) {
-        super(data);
+        super(data, ['eq', 'gt', 'gte', 'lt', 'lte']);
     }
 }
 
@@ -88,7 +88,7 @@ export class CompareDateInput extends Validatable implements ICompareDateInput {
     public lte?: Date;
 
     constructor(data: ICompareDateInput = {}) {
-        super(data);
+        super(data, ['eq', 'gt', 'gte', 'lt', 'lte']);
     }
 }
 
@@ -133,6 +133,6 @@ export class CompareNullableDateInput extends Validatable implements ICompareNul
     public lte?: Date;
 
     constructor(data: ICompareDateInput = {}) {
-        super(data);
+        super(data, ['eq', 'gt', 'gte', 'lt', 'lte']);
     }
 }

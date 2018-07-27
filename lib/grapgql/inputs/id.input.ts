@@ -8,7 +8,7 @@ export class IDInput extends Validatable {
     public id: string;
 
     constructor(id: string) {
-        super();
+        super({}, []);
         this.id = id;
     }
 }

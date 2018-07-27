@@ -30,8 +30,12 @@ export class ArgumentValidationError extends Error {
 
 export class Validatable {
 
-    constructor(data: object = {}) {
-        Object.keys(data).forEach(key => this[key] = data[key]);
+    constructor(data: object = {}, fields: string[]) {
+        Object.keys(data).forEach(key => {
+            if (fields.find(field => field === key)) {
+                this[key] = data[key];
+            }
+        });
     }
 
     public async validate(overwrites: ValidatorOptions = {}) {
@@ -48,5 +52,6 @@ export class Validatable {
             }
             throw e;
         }
+        return this;
     }
 }

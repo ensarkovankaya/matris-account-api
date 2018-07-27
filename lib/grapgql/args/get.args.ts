@@ -19,6 +19,6 @@ export class GetArgs extends Validatable implements IGetArgs {
     public email?: string;
 
     constructor(data: { id?: string, username?: string, email?: string }) {
-        super(data);
+        super(data, ['id', 'username', 'email']);
     }
 }

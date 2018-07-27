@@ -85,7 +85,8 @@ export class UserSchema extends Validatable implements Partial<IUser> {
     public groups?: string[];
 
     constructor(data: Partial<IUser>) {
-        super(data);
+        super(data, ['id', 'username', 'email', 'firstName', 'lastName', 'role', 'gender', 'birthday',
+             'active', 'createdAt', 'updatedAt', 'deletedAt', 'deleted', 'lastLogin', 'groups']);
     }
 
     public toJSON(): Partial<IUserModel> {

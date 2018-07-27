@@ -64,6 +64,7 @@ export class UpdateInput extends Validatable {
     public groups?: string[];
 
     constructor(data: IUpdateInputModel) {
-        super(data);
+        super(data, ['email', 'firstName', 'lastName', 'role',
+            'password', 'username', 'active', 'gender', 'birthday', 'groups']);
     }
 }

@@ -18,6 +18,6 @@ export class PaginationInput extends Validatable implements IPaginationOptions {
     public limit?: 5 | 10 | 25 | 50 | 100 | 150;
 
     constructor(data: IPaginationOptions = {}) {
-        super({page: 1, offset: 0, limit: 25, ...data});
+        super({page: 1, offset: 0, limit: 25, ...data}, ['page', 'offset', 'limit']);
     }
 }

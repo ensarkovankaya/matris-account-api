@@ -19,6 +19,6 @@ export class GenderQuery extends Validatable implements IGenderQueryModel {
     public in?: Gender[];
 
     constructor(data: { eq?: Gender, in?: Gender[] } = {}) {
-        super(data);
+        super(data, ['eq', 'in']);
     }
 }

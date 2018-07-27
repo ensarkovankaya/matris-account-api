@@ -59,6 +59,7 @@ export class CreateInput extends Validatable {
     public groups?: string[];
 
     constructor(data: ICreateInputModel) {
-        super(data);
+        super(data, ['email', 'firstName', 'lastName', 'role',
+            'password', 'username', 'active', 'gender', 'birthday', 'groups']);
     }
 }
