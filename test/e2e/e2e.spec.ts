@@ -10,16 +10,28 @@ import { IUserFilterModel } from '../../lib/models/user.filter.model';
 import { userFields } from '../../lib/models/user.model';
 import { Database } from '../data/database.data';
 import { IDBUserModel } from '../data/database.data.model';
+import { ICreateInputModel } from '../../lib/grapgql/models/create.input.model';
+import { CreateInputData } from '../data/create';
+import { CreateInput } from '../../lib/grapgql/inputs/create.input';
 
 const URL = process.env.URL || 'http://localhost:3000/graphql';
 const rootLogger = new RootLogger({level: 'debug'});
 const service = new AccountService({url: URL, logger: rootLogger.getLogger('AccountService')});
 let database: Database;
+let createData: CreateInputData;
+
+class ShouldNotSucceed extends Error {
+    public name = 'ShouldNotSucceed';
+}
 
 before('Load Users', async () => {
-    const USERS: IDBUserModel[] = JSON.parse(readFileSync(__dirname + '/../data/database.json', 'utf8'));
+    const DB_DATA: IDBUserModel[] = JSON.parse(readFileSync(__dirname + '/../data/database.json', 'utf8'));
     database = new Database();
-    await database.load(USERS);
+    await database.load(DB_DATA);
+
+    const CREATE_INPUTS: ICreateInputModel[] = JSON.parse(readFileSync(__dirname + '/../data/valid/create_data.json', 'utf8'));
+    createData = new CreateInputData();
+    await createData.load(CREATE_INPUTS);
 });
 
 describe('E2E', async () => {
@@ -258,18 +270,99 @@ describe('E2E', async () => {
     });
 
     describe('Create', () => {
-        it('should create user with minimum data', async () => {
-            const user = await service.create({
-                email: 'mail@mail.com',
-                firstName: 'First Name',
-                lastName: 'Last Name',
-                role: Role.ADMIN,
-                password: '12345678'
-            });
-            expect(user).to.be.an('object');
-            expect(user).to.have.keys(['id', 'email', 'firstName', 'lastName', 'username', 'createdAt',
-                'updatedAt', 'deletedAt', 'deleted', 'role', 'lastLogin', 'gender', 'active', 'birthday', 'groups']);
-            expect(user.email).to.be.eq('mail@mail.com');
+        it('should create user', async () => {
+
+            const createUser = async (data: ICreateInputModel) => {
+                const user = await service.create(data);
+                expect(user).to.be.an('object');
+                expect(user).to.have.keys(['id', 'email', 'firstName', 'lastName', 'username', 'createdAt',
+                    'updatedAt', 'deletedAt', 'deleted', 'role', 'lastLogin', 'gender', 'active', 'birthday', 'groups']);
+                // Must data
+                expect(user.email).to.be.eq(data.email);
+                expect(user.firstName).to.be.eq(data.firstName);
+                expect(user.lastName).to.be.eq(data.lastName);
+                expect(user.role).to.be.eq(data.role);
+                // Optional
+                if (data.gender) {
+                    expect(user.gender).to.be.eq(data.gender);
+                } else {
+                    expect(user.gender).to.be.eq(Gender.UNKNOWN);
+                }
+                if (data.username) {
+                    expect(user.username).to.be.eq(data.username);
+                } else {
+                    expect(user.username).to.be.a('string');
+                }
+                if (data.active !== undefined) {
+                    expect(user.active).to.be.eq(data.active);
+                } else {
+                    expect(user.active).to.be.eq(true);
+                }
+                if (data.birthday) {
+                    expect(user.birthday).to.be.a('date');
+                    const birthday = user.birthday as Date;
+                    expect(birthday.toJSON()).to.be.eq(new Date(data.birthday).toJSON());
+                } else {
+                    expect(user.birthday).to.be.eq(null);
+                }
+                // Default
+                expect(user.groups).to.be.an('array');
+                expect(user.groups).to.have.lengthOf(0);
+                
+                expect(user.createdAt).to.be.a('date');
+                expect(user.updatedAt).to.be.a('date');
+                expect(user.deletedAt).to.be.eq(null);
+                expect(user.deleted).to.be.eq(false);
+                expect(user.id).to.be.a('string');
+                expect(user.id).to.have.lengthOf(24);
+                expect(user.lastLogin).to.be.eq(null);
+            }
+            const inputs = createData.multiple(10);
+            for (const data of inputs) {
+                try {
+                    await createUser(data);
+                } catch(e) {
+                    console.log('User creation failed', e);
+                    throw e;
+                }
+            }
+        }).timeout(5000);
+
+        it('should raise EmailAlreadyExists', async () => {
+            try {
+                const user = database.get({deleted: false});
+                const createData: ICreateInputModel = {
+                    email: user.email,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    role: user.role,
+                    password: '12345678'
+                }
+                await service.create(createData);
+                throw new ShouldNotSucceed();
+            } catch (e) {
+                expect(e.name).to.be.eq('APIError');
+                expect(e.hasError('EmailAlreadyExists')).to.be.eq(true);
+            }
+        });
+
+        it('should raise UserNameExists', async () => {
+            try {
+                const user = database.get({deleted: false});
+                const createData: ICreateInputModel = {
+                    email: 'mail@mail.com',
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    role: user.role,
+                    password: '12345678',
+                    username: user.username
+                }
+                await service.create(createData);
+                throw new ShouldNotSucceed();
+            } catch (e) {
+                expect(e.name).to.be.eq('APIError');
+                expect(e.hasError('UserNameExists')).to.be.eq(true);
+            }
         });
     });
 
