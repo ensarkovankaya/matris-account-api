@@ -53,7 +53,7 @@ export class AccountService extends BaseService {
         }
 
         // Validate arguments
-        await new GetArgs(by).validate();
+        const validatedData = await new GetArgs(by).validate();
 
         // Get Fragment
         const fragment = this.buildUserFieldFragment(fields);
@@ -65,7 +65,8 @@ export class AccountService extends BaseService {
                     }
                 }
                 ${fragment}`;
-            const response = await this.call<{ user: Partial<IUserModel> | null }>(query, by);
+            const variables = {...validatedData};
+            const response = await this.call<{ user: Partial<IUserModel> | null }>(query, variables);
             this.debug('Get', {response});
             response.raise();
             if (response.data === undefined || response.data.user === undefined) {
@@ -91,8 +92,8 @@ export class AccountService extends BaseService {
         Promise<IPaginateResult<Partial<UserSchema>>> {
         this.debug('Find', {filters, fields, pagination});
         // Validate arguments
-        await new FilterInput(filters).validate();
-        await new PaginationInput(pagination).validate();
+        const validatedFilters = await new FilterInput(filters).validate();
+        const validatedPagination = await new PaginationInput(pagination).validate();
 
         // Get Fragment
         const fragment = this.buildUserFieldFragment(fields);
@@ -107,7 +108,7 @@ export class AccountService extends BaseService {
                               }
                             }
                             ${fragment}`;
-        const variables = {filters, pagination};
+        const variables = {filters: validatedFilters, pagination: validatedPagination};
         const response = await this.call<{ result: IPaginateResult<Partial<IUserModel>> }>(query, variables);
         this.debug('Find', {response});
 
@@ -163,7 +164,7 @@ export class AccountService extends BaseService {
      */
     public async create(data: ICreateInputModel, fields: UserField[] = userFields): Promise<Partial<UserSchema>> {
         this.debug('Create', {data, fields});
-        await new CreateInput(data).validate();
+        const validatedData = await new CreateInput(data).validate();
         try {
             // Get Fragment
             const fragment = this.buildUserFieldFragment(fields);
@@ -172,7 +173,7 @@ export class AccountService extends BaseService {
                               user: create(data: $data) { ...UserFields }
                             }
                             ${fragment}`;
-            const response = await this.call<{ user: Partial<IUserModel> }>(query, {data});
+            const response = await this.call<{ user: Partial<IUserModel> }>(query, {data: validatedData});
             this.debug('Create', {response});
 
             response.raise();
@@ -200,7 +201,7 @@ export class AccountService extends BaseService {
     ): Promise<Partial<UserSchema>> {
         this.debug('Update', {id, data, fields});
         await new IDInput(id).validate();
-        await new UpdateInput(data).validate();
+        const validatedData = await new UpdateInput(data).validate();
         try {
             // Get Fragment
             const fragment = this.buildUserFieldFragment(fields);
@@ -209,7 +210,7 @@ export class AccountService extends BaseService {
                               user: update(id: $id, data: $data) { ...UserFields }
                             }
                             ${fragment}`;
-            const response = await this.call<{ user: Partial<IUserModel> }>(query, {id, data});
+            const response = await this.call<{ user: Partial<IUserModel> }>(query, {id, data: validatedData});
             this.debug('Update', {response});
 
             response.raise();
