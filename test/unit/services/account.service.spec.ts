@@ -4,17 +4,17 @@ import { AccountService } from '../../../lib';
 import { Gender } from '../../../lib/models/gender.model';
 import { UserSchema } from '../../../lib/models/user';
 import { userFields } from '../../../lib/models/user.model';
-import { UserGenerator } from '../../data/data';
+import { Database } from '../../data/database';
 import { MockGraphQLClient } from '../mock.client';
 import { readFileSync } from 'fs';
 import { IDBUserModel } from '../../data/user.model';
 import { Role } from '../../../lib/models/role.model';
 
-const generator = new UserGenerator();
+const database = new Database();
 
 before('Load Data', async () => {
-    const USERS: IDBUserModel[] = JSON.parse(readFileSync(__dirname + '/../../data/valid.json', 'utf8'));
-    await generator.load(USERS);
+    const USERS: IDBUserModel[] = JSON.parse(readFileSync(__dirname + '/../../data/database.json', 'utf8'));
+    await database.load(USERS);
 });
 
 class ShouldNotSucceed extends Error {
@@ -105,7 +105,7 @@ describe('AccountService Unit Tests', async () => {
         });
         
         it('should add variables to request', async () => {
-            const mockUser = generator.get();
+            const mockUser = database.get();
             const client = new MockGraphQLClient('', {}, {user: null});
             const service = new AccountService({url: '', client});
             await service.get({
@@ -117,7 +117,7 @@ describe('AccountService Unit Tests', async () => {
         });
         
         it('should return requested user', async () => {
-            const mockUser = generator.get();
+            const mockUser = database.get();
             const client = new MockGraphQLClient('', {}, {user: mockUser});
             const service = new AccountService({url: '', client});
             const user = await service.get({id: mockUser._id}) as UserSchema;
@@ -235,7 +235,7 @@ describe('AccountService Unit Tests', async () => {
         });
         
         it('should transform result to User object', async () => {
-            const mockUsers = generator.multiple(10);
+            const mockUsers = database.multiple(10);
             const client = new MockGraphQLClient('', {}, {
                 result: {
                     docs: mockUsers,
@@ -319,7 +319,7 @@ describe('AccountService Unit Tests', async () => {
         });
         
         it('should iterate', async () => {
-            const mockUsers = generator.multiple(25);
+            const mockUsers = database.multiple(25);
             
             class Client {
                 

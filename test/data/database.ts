@@ -41,7 +41,7 @@ export interface IMultipleFilter extends IUserFilter {
     shuffle?: boolean;
 }
 
-export class UserGenerator {
+export class Database {
 
     private users: IDBUserModel[];
 
