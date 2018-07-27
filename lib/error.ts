@@ -1,14 +1,34 @@
-import { GraphQLError } from 'graphql-request/dist/src/types';
+import { GraphQLError as IGraphQLError } from 'graphql-request/dist/src/types';
 import { ArgumentValidationError } from './grapgql/validatable';
 
-export class APIValidationError extends Error {
+export class GraphQLError extends Error implements IGraphQLError {
+    public message: string;
+    public locations: Array<{
+        line: number;
+        column: number;
+    }>;
+    public path: string[];
 
-    public name = 'APIValidationError';
-    public errors: GraphQLError[];
+    constructor(error: IGraphQLError) {
+        super();
+        this.message = error.message;
+        this.locations = error.locations;
+        this.path = error.path;
+    }
+}
 
-    constructor(errors: GraphQLError[]) {
+export class APIError extends Error {
+
+    public name = 'APIError';
+    public errors: IGraphQLError[];
+
+    constructor(errors: IGraphQLError[]) {
         super();
         this.errors = errors;
+    }
+
+    public hasError(name: string): boolean {
+        return !!this.errors.find(e => e.message === name);
     }
 }
 

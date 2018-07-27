@@ -68,7 +68,7 @@ export class AccountService extends BaseService {
             const variables = {...validatedData};
             const response = await this.call<{ user: Partial<IUserModel> | null }>(query, variables);
             this.debug('Get', {response});
-            response.raise();
+            response.hasErrors(true);
             if (response.data === undefined || response.data.user === undefined) {
                 throw new UnexpectedResponse();
             }
@@ -112,7 +112,7 @@ export class AccountService extends BaseService {
         const response = await this.call<{ result: IPaginateResult<Partial<IUserModel>> }>(query, variables);
         this.debug('Find', {response});
 
-        response.raise();
+        response.hasErrors(true);
 
         if (response.data === undefined || response.data.result === undefined) {
             throw new UnexpectedResponse();
@@ -176,7 +176,7 @@ export class AccountService extends BaseService {
             const response = await this.call<{ user: Partial<IUserModel> }>(query, {data: validatedData});
             this.debug('Create', {response});
 
-            response.raise();
+            response.hasErrors(true);
 
             if (!response.data || !response.data.user) {
                 throw new UnexpectedResponse();
@@ -213,7 +213,7 @@ export class AccountService extends BaseService {
             const response = await this.call<{ user: Partial<IUserModel> }>(query, {id, data: validatedData});
             this.debug('Update', {response});
 
-            response.raise();
+            response.hasErrors(true);
 
             if (!response.data || !response.data.user) {
                 throw new UnexpectedResponse();
@@ -234,7 +234,7 @@ export class AccountService extends BaseService {
             const response = await this.call<{deleted: true}>(query, {id});
             this.debug('Delete', {response});
 
-            response.raise();
+            response.hasErrors(true);
 
             if (!response.data || response.data.deleted !== true) {
                 throw new UnexpectedResponse();

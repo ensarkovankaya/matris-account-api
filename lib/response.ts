@@ -1,4 +1,4 @@
-import { APIValidationError } from './error';
+import { APIError, GraphQLError } from './error';
 import { IGraphQLError } from './grapgql/models/graphql.error.model';
 import { IAPIResponse } from './models/response.model';
 
@@ -13,21 +13,19 @@ export class APIResponse<T> implements IAPIResponse<T> {
         this.data = data;
     }
 
-    public hasErrors(): boolean {
-        return this.errors.length > 0;
+    public hasErrors(raise: boolean = false): boolean {
+        const has = this.errors.length > 0;
+        if (raise) {
+            throw new APIError(this.errors);
+        }
+        return has;
     }
 
-    public hasError(name: string, raise: boolean = false): boolean {
-        const hasError = this.errors.filter(e => e.message === name).length > 0;
-        if (hasError && raise) {
-            throw new APIValidationError(this.errors);
+    public hasError(message: string, raise: boolean = false): boolean {
+        const error = this.errors.find(e => e.message === message);
+        if (error && raise) {
+            throw new GraphQLError(error);
         }
-        return hasError;
-    }
-
-    public raise() {
-        if (this.hasErrors()) {
-            throw new APIValidationError(this.errors);
-        }
+        return !!error;
     }
 }
