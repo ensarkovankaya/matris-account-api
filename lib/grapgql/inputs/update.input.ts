@@ -59,12 +59,16 @@ export class UpdateInput extends Validatable {
     public birthday?: Date | string | null;
 
     @ValidateIf(((object, value) => value !== undefined))
+    @IsBoolean()
+    public updateLastLogin?: boolean;
+
+    @ValidateIf(((object, value) => value !== undefined))
     @IsArray()
     @Length(24, 24, {message: 'InvalidIDLength', each: true})
     public groups?: string[];
 
     constructor(data: IUpdateInputModel) {
-        super(data, ['email', 'firstName', 'lastName', 'role',
+        super(data, ['email', 'firstName', 'lastName', 'role', 'updateLastLogin',
             'password', 'username', 'active', 'gender', 'birthday', 'groups']);
     }
 }
