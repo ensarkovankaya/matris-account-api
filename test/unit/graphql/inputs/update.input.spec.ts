@@ -357,4 +357,26 @@ describe('GraphQL -> Inputs -> UpdateInput', () => {
             }
         });
     });
+
+    describe('UpdateLastLogin', () => {
+        it('should be valid', async () => {
+            const input1 = new UpdateInput({updateLastLogin: true});
+            expect(input1.updateLastLogin).to.be.eq(true);
+            await input1.validate();
+
+            const input2 = new UpdateInput({updateLastLogin: false} as any);
+            expect(input2.updateLastLogin).to.be.eq(false);
+            await input2.validate();
+        });
+
+        it('should raise ValidationError', async () => {
+            try {
+                await new UpdateInput({updateLastLogin: 'asd'} as any).validate();
+                throw new ShouldNotSucceed();
+            } catch (e) {
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('updateLastLogin', 'isBoolean')).to.be.eq(true);
+            }
+        });
+    });
 });

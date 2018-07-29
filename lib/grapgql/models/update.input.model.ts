@@ -12,5 +12,5 @@ export interface IUpdateInputModel {
     gender?: Gender;
     birthday?: Date | string;
     groups?: string[];
-    updateLastlogin?: true;
+    updateLastLogin?: true;
 }
