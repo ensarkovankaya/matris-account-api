@@ -7,17 +7,20 @@ import { IPaginationOptions } from '../../lib/grapgql/models/pagination.model';
 import { Gender } from '../../lib/models/gender.model';
 import { Role } from '../../lib/models/role.model';
 import { IUserFilterModel } from '../../lib/models/user.filter.model';
-import { userFields } from '../../lib/models/user.model';
+import { userFields, IUserModel } from '../../lib/models/user.model';
 import { Database } from '../data/database.data';
 import { IDBUserModel } from '../data/database.data.model';
 import { ICreateInputModel } from '../../lib/grapgql/models/create.input.model';
 import { CreateInputData } from '../data/create';
+import { UpdateInputData } from '../data/update';
+import { IUpdateInputModel } from '../../lib/grapgql/models/update.input.model';
 
 const URL = process.env.URL || 'http://localhost:3000/graphql';
 const rootLogger = new RootLogger({level: 'debug'});
 const service = new AccountService({url: URL, logger: rootLogger.getLogger('AccountService')});
 let database: Database;
-let createData: CreateInputData;
+let createInputData: CreateInputData;
+let updateInputData: UpdateInputData;
 
 class ShouldNotSucceed extends Error {
     public name = 'ShouldNotSucceed';
@@ -28,9 +31,13 @@ before('Load Users', async () => {
     database = new Database();
     await database.load(DB_DATA);
 
-    const CREATE_INPUTS: ICreateInputModel[] = JSON.parse(readFileSync(__dirname + '/../data/valid/create_data.json', 'utf8'));
-    createData = new CreateInputData();
-    await createData.load(CREATE_INPUTS);
+    const create_inputs: ICreateInputModel[] = JSON.parse(readFileSync(__dirname + '/../data/valid/create_data.json', 'utf8'));
+    createInputData = new CreateInputData();
+    await createInputData.load(create_inputs);
+
+    const update_inputs: IUpdateInputModel[] = JSON.parse(readFileSync(__dirname + '/../data/valid/update_data.json', 'utf8'));
+    updateInputData = new UpdateInputData();
+    await updateInputData.load(update_inputs);
 });
 
 describe('E2E', async () => {
@@ -316,7 +323,7 @@ describe('E2E', async () => {
                 expect(user.id).to.have.lengthOf(24);
                 expect(user.lastLogin).to.be.eq(null);
             }
-            const inputs = createData.multiple(10);
+            const inputs = createInputData.multiple(10);
             for (const data of inputs) {
                 await createUser(data);
             }
@@ -358,6 +365,61 @@ describe('E2E', async () => {
                 expect(e.hasError('UserNameExists')).to.be.eq(true);
             }
         });
+    });
+
+    describe('Update', () => {
+        it('should update user', async () => {
+            const updateUser = async (user: IUserModel, data: IUpdateInputModel) => {
+                const updated = await service.update(user._id, data);
+                expect(updated).to.be.an('object');
+                expect(updated).to.have.keys(['id', 'email', 'firstName', 'lastName', 'username', 'createdAt',
+                    'updatedAt', 'deletedAt', 'deleted', 'role', 'lastLogin', 'gender', 'active', 'birthday', 'groups']);
+                
+                if (data.firstName) {
+                    expect(updated.firstName).to.be.eq(data.firstName);
+                }
+                if (data.lastName) {
+                    expect(updated.lastName).to.be.eq(data.lastName);
+                }
+                if (data.role) {
+                    expect(updated.role).to.be.eq(data.role);
+                }
+                if (data.email) {
+                    expect(updated.email).to.be.eq(data.email);
+                }
+                if (data.username) {
+                    expect(updated.username).to.be.eq(data.username);
+                }
+                if (data.updateLastlogin) {
+                    expect(updated.lastLogin).to.be.not.eq(user.lastLogin);
+                }
+                if (data.active !== undefined) {
+                    expect(updated.active).to.be.eq(data.active);
+                }
+                if (data.birthday !== undefined) {
+                    if (data.birthday === null) {
+                        expect(updated.birthday).to.be.eq(null);
+                    } else {
+                        const birthday = updated.birthday as Date;
+                        expect(birthday.toJSON()).to.be.eq(data.birthday);
+                    }
+                }
+                const updatedAt = updated.updatedAt as Date;
+                expect(updatedAt).to.be.a('date');
+                expect(updatedAt.toJSON()).to.be.not.eq(new Date(user.updatedAt).toJSON());
+
+                // Check not updated fields are same
+                const createdAt = updated.createdAt as Date;
+                expect(createdAt).to.be.a('date');
+                expect(createdAt.toJSON()).to.be.eq(new Date(user.createdAt).toJSON());
+                
+            }
+            const inputs = updateInputData.multiple(10);
+            for (const data of inputs) {
+                const user = database.get();
+                await updateUser(user, data);
+            }
+        }).timeout(5000);
     });
 
     describe('Find', () => {
