@@ -390,7 +390,7 @@ describe('E2E', async () => {
                 if (data.username) {
                     expect(updated.username).to.be.eq(data.username);
                 }
-                if (data.updateLastlogin) {
+                if (data.updateLastLogin) {
                     expect(updated.lastLogin).to.be.not.eq(user.lastLogin);
                 }
                 if (data.active !== undefined) {
@@ -416,10 +416,49 @@ describe('E2E', async () => {
             }
             const inputs = updateInputData.multiple(10);
             for (const data of inputs) {
-                const user = database.get();
+                const user = database.get({deleted: false});
                 await updateUser(user, data);
             }
         }).timeout(5000);
+
+        it('should raise UserNotFound', async () => {
+            try {
+                const updateData: IUpdateInputModel = {firstName: 'First Name'};
+                await service.update('1'.repeat(24), updateData);
+                throw new ShouldNotSucceed();
+            } catch (e) {
+                expect(e.name).to.be.eq('APIError');
+                expect(e.hasError('UserNotFound')).to.be.eq(true);
+            }
+        });
+
+        it('should raise EmailAlreadyExists', async () => {
+            try {
+                const [user1, user2] = database.multiple(2, {deleted: false});
+                const updateData: IUpdateInputModel = {
+                    email: user2.email
+                }
+                await service.update(user1._id, updateData);
+                throw new ShouldNotSucceed();
+            } catch (e) {
+                expect(e.name).to.be.eq('APIError');
+                expect(e.hasError('EmailAlreadyExists')).to.be.eq(true);
+            }
+        });
+
+        it('should raise UserNameExists', async () => {
+            try {
+                const [user1, user2] = database.multiple(2, {deleted: false});
+                const updateData: IUpdateInputModel = {
+                    username: user2.username
+                }
+                await service.update(user1._id, updateData);
+                throw new ShouldNotSucceed();
+            } catch (e) {
+                expect(e.name).to.be.eq('APIError');
+                expect(e.hasError('UserNameExists')).to.be.eq(true);
+            }
+        });
     });
 
     describe('Find', () => {
