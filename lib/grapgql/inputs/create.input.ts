@@ -20,13 +20,15 @@ export class CreateInput extends Validatable {
     @IsEmail({}, {message: 'InvalidEmail'})
     public email: string | undefined;
 
-    @Matches(new RegExp('^[a-zA-Z ]+$'), {message: 'InvalidFirstName'})
-    @Length(2, 32, {message: 'InvalidLength'})
-    public firstName: string | undefined;
+    @ValidateIf(((object, value) => value !== undefined))
+    @Matches(new RegExp('^[a-zA-Z ]*$'), {message: 'InvalidFirstName'})
+    @Length(0, 32, {message: 'InvalidLength'})
+    public firstName?: string | undefined;
 
-    @Matches(new RegExp('^[a-zA-Z ]+$'), {message: 'InvalidLastName'})
-    @Length(2, 32, {message: 'InvalidLength'})
-    public lastName: string | undefined;
+    @ValidateIf(((object, value) => value !== undefined))
+    @Matches(new RegExp('^[a-zA-Z ]*$'), {message: 'InvalidLastName'})
+    @Length(0, 32, {message: 'InvalidLength'})
+    public lastName?: string | undefined;
 
     @IsIn([Role.ADMIN, Role.MANAGER, Role.INSTRUCTOR, Role.PARENT, Role.STUDENT], {message: 'Invalid'})
     public role: Role | undefined;

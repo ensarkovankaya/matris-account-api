@@ -22,13 +22,13 @@ export class UpdateInput extends Validatable {
     public email?: string;
 
     @ValidateIf(((object, value) => value !== undefined))
-    @Matches(new RegExp('^[a-zA-Z ]+$'), {message: 'InvalidFirstName'})
-    @Length(2, 32, {message: 'InvalidLength'})
+    @Matches(new RegExp('^[a-zA-Z ]*$'), {message: 'InvalidFirstName'})
+    @Length(0, 32, {message: 'InvalidLength'})
     public firstName?: string;
 
     @ValidateIf(((object, value) => value !== undefined))
-    @Matches(new RegExp('^[a-zA-Z ]+$'), {message: 'InvalidLastName'})
-    @Length(2, 32, {message: 'InvalidLength'})
+    @Matches(new RegExp('^[a-zA-Z ]*$'), {message: 'InvalidLastName'})
+    @Length(0, 32, {message: 'InvalidLength'})
     public lastName?: string;
 
     @ValidateIf(((object, value) => value !== undefined))

@@ -15,9 +15,8 @@ describe('GraphQL -> Inputs -> CreateInput', () => {
             throw new ShouldNotSucceed();
         } catch (e) {
             expect(e.name).to.be.eq('ArgumentValidationError');
+            expect(e.errors).to.have.keys(['email', 'role', 'password']);
             expect(e.hasError('email')).to.be.eq(true);
-            expect(e.hasError('firstName')).to.be.eq(true);
-            expect(e.hasError('lastName')).to.be.eq(true);
             expect(e.hasError('role')).to.be.eq(true);
             expect(e.hasError('password')).to.be.eq(true);
         }
@@ -60,16 +59,20 @@ describe('GraphQL -> Inputs -> CreateInput', () => {
                 expect(e.name).to.be.eq('ArgumentValidationError');
                 expect(e.hasError('firstName')).to.be.eq(false);
             }
-        });
 
-        it('should raise ValidationError', async () => {
             try {
-                await new CreateInput({firstName: 'F'} as any).validate();
+                const input = new CreateInput({firstName: ''} as any);
+                expect(input).to.have.keys(['firstName']);
+                expect(input.firstName).to.be.eq('');
+                await input.validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
                 expect(e.name).to.be.eq('ArgumentValidationError');
-                expect(e.hasError('firstName', 'length')).to.be.eq(true);
+                expect(e.hasError('firstName')).to.be.eq(false);
             }
+        });
+
+        it('should raise ValidationError', async () => {
 
             try {
                 await new CreateInput({firstName: 'F'.repeat(33)} as any).validate();
@@ -109,17 +112,20 @@ describe('GraphQL -> Inputs -> CreateInput', () => {
                 expect(e.name).to.be.eq('ArgumentValidationError');
                 expect(e.hasError('lastName')).to.be.eq(false);
             }
-        });
 
-        it('should raise ValidationError', async () => {
             try {
-                await new CreateInput({lastName: 'F'} as any).validate();
+                const input = new CreateInput({lastName: ''} as any);
+                expect(input).to.have.keys(['lastName']);
+                expect(input.lastName).to.be.eq('');
+                await input.validate();
                 throw new ShouldNotSucceed();
             } catch (e) {
                 expect(e.name).to.be.eq('ArgumentValidationError');
-                expect(e.hasError('lastName', 'length')).to.be.eq(true);
+                expect(e.hasError('lastName')).to.be.eq(false);
             }
+        });
 
+        it('should raise ValidationError', async () => {
             try {
                 await new CreateInput({lastName: 'F'.repeat(33)} as any).validate();
                 throw new ShouldNotSucceed();

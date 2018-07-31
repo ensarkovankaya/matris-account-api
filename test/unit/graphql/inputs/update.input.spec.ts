@@ -34,21 +34,18 @@ describe('GraphQL -> Inputs -> UpdateInput', () => {
 
     describe('FirstName', () => {
         it('should be valid', async () => {
-            const input = new UpdateInput({firstName: 'First Name'});
-            expect(input).to.have.keys(['firstName']);
-            expect(input.firstName).to.be.eq('First Name');
-            await input.validate();
+            const input1 = new UpdateInput({firstName: 'First Name'});
+            expect(input1).to.have.keys(['firstName']);
+            expect(input1.firstName).to.be.eq('First Name');
+            await input1.validate();
+
+            const input2 = new UpdateInput({firstName: ''});
+            expect(input2).to.have.keys(['firstName']);
+            expect(input2.firstName).to.be.eq('');
+            await input2.validate();
         });
 
         it('should raise ValidationError', async () => {
-            try {
-                await new UpdateInput({firstName: 'F'}).validate();
-                throw new ShouldNotSucceed();
-            } catch (e) {
-                expect(e.name).to.be.eq('ArgumentValidationError');
-                expect(e.hasError('firstName', 'length')).to.be.eq(true);
-            }
-
             try {
                 await new UpdateInput({firstName: 'F'.repeat(33)}).validate();
                 throw new ShouldNotSucceed();
@@ -77,21 +74,18 @@ describe('GraphQL -> Inputs -> UpdateInput', () => {
 
     describe('LastName', () => {
         it('should be valid', async () => {
-            const input = new UpdateInput({lastName: 'Last Name'});
-            expect(input).to.have.keys(['lastName']);
-            expect(input.lastName).to.be.eq('Last Name');
-            await input.validate();
+            const input1 = new UpdateInput({lastName: 'Last Name'});
+            expect(input1).to.have.keys(['lastName']);
+            expect(input1.lastName).to.be.eq('Last Name');
+            await input1.validate();
+
+            const input2 = new UpdateInput({lastName: ''});
+            expect(input2).to.have.keys(['lastName']);
+            expect(input2.lastName).to.be.eq('');
+            await input2.validate();
         });
 
         it('should raise ValidationError', async () => {
-            try {
-                await new UpdateInput({lastName: 'F'}).validate();
-                throw new ShouldNotSucceed();
-            } catch (e) {
-                expect(e.name).to.be.eq('ArgumentValidationError');
-                expect(e.hasError('lastName', 'length')).to.be.eq(true);
-            }
-
             try {
                 await new UpdateInput({lastName: 'F'.repeat(33)}).validate();
                 throw new ShouldNotSucceed();

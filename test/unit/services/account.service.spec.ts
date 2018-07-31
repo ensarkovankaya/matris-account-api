@@ -439,10 +439,8 @@ describe('GraphQL -> Services -> AccountService', async () => {
             } catch (e) {
                 expect(e.name).to.be.eq('ArgumentValidationError');
                 expect(e.errors).to.be.an('object');
-                expect(e.errors).to.have.keys(['email', 'firstName', 'lastName', 'role', 'password']);
+                expect(e.errors).to.have.keys(['email', 'role', 'password']);
                 expect(e.hasError('email')).to.be.eq(true);
-                expect(e.hasError('firstName')).to.be.eq(true);
-                expect(e.hasError('lastName')).to.be.eq(true);
                 expect(e.hasError('role')).to.be.eq(true);
                 expect(e.hasError('password')).to.be.eq(true);
             }
