@@ -8,7 +8,9 @@ import { APIResponse } from '../response';
  */
 export class BaseService {
 
-    constructor(private client: IClientModel, protected logger?: ILoggerModel) {
+    public client?: IClientModel;
+
+    constructor(protected logger?: ILoggerModel) {
     }
 
     public debug(message: string, data?: any) {
@@ -31,6 +33,9 @@ export class BaseService {
      */
     protected async call<T>(query: string, variables?: Variables): Promise<APIResponse<T>> {
         this.debug('Call', {query, variables});
+        if (!this.client) {
+            throw new Error('ClientNotRegistered');
+        }
         try {
             return await this.client.request<T>(query, variables)
                 .then(data => this.handleResponse<T>(data))

@@ -6,6 +6,7 @@ import { CreateInput } from '../grapgql/inputs/create.input';
 import { FilterInput } from '../grapgql/inputs/filter.input';
 import { IDInput } from '../grapgql/inputs/id.input';
 import { PaginationInput } from '../grapgql/inputs/pagination.input';
+import { PasswordInput } from '../grapgql/inputs/password.input';
 import { UpdateInput } from '../grapgql/inputs/update.input';
 import { IGetArgs } from '../grapgql/models/args.model';
 import { ICreateInputModel } from '../grapgql/models/create.input.model';
@@ -19,7 +20,7 @@ import { IUserModel, UserField, userFields } from '../models/user.model';
 import { BaseService } from './base.service';
 
 export interface IServiceOptions {
-    url: string;
+    url?: string;
     overwrites?: Options;
     client?: IClientModel;
     logger?: ILoggerModel;
@@ -27,16 +28,25 @@ export interface IServiceOptions {
 
 export class AccountService extends BaseService {
 
-    constructor(options: IServiceOptions) {
-        const overwrites = options.overwrites || {};
-        const client = options.client ? options.client : new GraphQLClient(options.url, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            ...overwrites
-        });
-        super(client, options.logger);
+    constructor(options: IServiceOptions = {}) {
+        super(options.logger);
+        this.configure(options);
+    }
+
+    public configure(options: IServiceOptions) {
+        try {
+            const overwrites = options.overwrites || {};
+            this.client = options.client ? options.client : new GraphQLClient(options.url || '', {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                ...overwrites
+            });
+        } catch (e) {
+            this.error('Configuration failed.', e, {options});
+            throw e;
+        }
     }
 
     /**
@@ -241,6 +251,29 @@ export class AccountService extends BaseService {
             }
         } catch (e) {
             this.error('Delete', e);
+            throw e;
+        }
+    }
+
+    public async password(email: string, password: string): Promise<boolean> {
+        this.debug('Password', {email, password});
+        const validatedData = await new PasswordInput({email, password}).validate();
+        try {
+            // Build query
+            const query = `query isPasswordValid($email: String!, $password: String!) {
+                valid: password(data: {email: $email, password: $password})
+            }`;
+            const response = await this.call<{valid: boolean}>(query, validatedData);
+            this.debug('Password', {response});
+
+            response.hasErrors(true);
+
+            if (!response.data || typeof response.data.valid !== 'boolean') {
+                throw new UnexpectedResponse();
+            }
+            return response.data.valid;
+        } catch (e) {
+            this.error('Password', e);
             throw e;
         }
     }

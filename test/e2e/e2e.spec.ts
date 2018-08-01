@@ -513,4 +513,50 @@ describe('E2E', async () => {
             expect(result.docs.map(u => u.id).sort()).to.be.deep.eq(expectedResult.docs.map(u => u._id).sort());
         });
     });
+
+    describe('Password', () => {
+        it('should raise UserNotFound', async () => {
+            try {
+                await service.password('notexists@user.com', '12345678');
+                throw new ShouldNotSucceed();
+            } catch (e) {
+                expect(e.name).to.be.eq('APIError');
+                expect(e.hasError('UserNotFound')).to.be.eq(true);
+            }
+        });
+
+        it('should raise UserNotFound for deleted user', async () => {
+            try {
+                const user = await database.get({deleted: true});
+                await service.password(user.email, user.email);
+                throw new ShouldNotSucceed();
+            } catch (e) {
+                expect(e.name).to.be.eq('APIError');
+                expect(e.hasError('UserNotFound')).to.be.eq(true);
+            }
+        });
+
+        it('should raise UserNotActive', async () => {
+            try {
+                const user = await database.get({active: false, deleted: false});
+                await service.password(user.email, '12345678');
+                throw new ShouldNotSucceed();
+            } catch (e) {
+                expect(e.name).to.be.eq('APIError');
+                expect(e.hasError('UserNotActive')).to.be.eq(true);
+            }
+        });
+
+        it('should return true', async () => {
+            const user = await database.get({active: true, deleted: false});
+            const valid = await service.password(user.email, user.email);
+            expect(valid).to.be.eq(true);
+        });
+
+        it('should return false', async () => {
+            const user = await database.get({active: true, deleted: false});
+            const valid = await service.password(user.email, '12345678');
+            expect(valid).to.be.eq(false);
+        });
+    });
 });

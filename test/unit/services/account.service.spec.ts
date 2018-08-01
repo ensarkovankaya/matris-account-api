@@ -617,4 +617,40 @@ describe('GraphQL -> Services -> AccountService', async () => {
             }
         });
     });
+
+    describe('Password', () => {
+        it('should raise ArgumentValidationError', async () => {
+            try {
+                const client = new MockGraphQLClient('', {});
+                const service = new AccountService({url: '', client});
+                await service.password('notanemail', '');
+                throw new ShouldNotSucceed();
+            } catch (e) {
+                expect(e.name).to.be.eq('ArgumentValidationError');
+                expect(e.hasError('email')).to.be.eq(true);
+                expect(e.hasError('password')).to.be.eq(true);
+            }
+        });
+
+        it('should call with query and variables', async () => {
+            const client = new MockGraphQLClient('', {}, {valid: true});
+            const service = new AccountService({url: '', client});
+            await service.password('mail@mail.com', '12345678');
+            expect(client.variables).to.be.deep.eq({email: 'mail@mail.com', password: '12345678'});
+            expect(client.query).to.be.eq(`query isPasswordValid($email: String!, $password: String!) {
+                valid: password(data: {email: $email, password: $password})
+            }`);
+        });
+
+        it('should raise UnexpectedResponse', async () => {
+            try {
+                const client = new MockGraphQLClient('', {}, null);
+                const service = new AccountService({url: '', client});
+                await service.password('mail@mail.com', '12345678');
+                throw new ShouldNotSucceed();
+            } catch (e) {
+                expect(e.name).to.be.eq('UnexpectedResponse');
+            }
+        });
+    });
 });
