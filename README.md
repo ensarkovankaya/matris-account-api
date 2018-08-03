@@ -16,7 +16,7 @@ const user = await service.get({email: 'mail@email.com'});
 
 ## Todo
 
-- Upgrade docs
+- Update docs
 
 ## Test
 
