@@ -6,7 +6,7 @@ export class PasswordInput extends Validatable {
     @IsEmail({}, {message: 'InvalidEmail'})
     public email: string;
 
-    @Length(8, 32, {message: 'InvalidLength'})
+    @Length(8, 40, {message: 'InvalidLength'})
     public password: string;
 
     constructor(data: IPasswordInput) {
