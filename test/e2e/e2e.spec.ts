@@ -15,9 +15,9 @@ import { CreateInputData } from '../data/create';
 import { UpdateInputData } from '../data/update';
 import { IUpdateInputModel } from '../../lib/grapgql/models/update.input.model';
 
-const URL = process.env.URL || 'http://localhost:3000/graphql';
-const rootLogger = new RootLogger({level: 'debug'});
-const service = new AccountService({url: URL, logger: rootLogger.getLogger('AccountService')});
+const URL = process.env.URL || 'http://localhost:3000/';
+const rootLogger = new RootLogger({ level: 'debug' });
+const service = new AccountService({ url: URL, logger: rootLogger.getLogger('AccountService') });
 let database: Database;
 let createInputData: CreateInputData;
 let updateInputData: UpdateInputData;
@@ -43,77 +43,80 @@ before('Load Users', async () => {
 describe('E2E', async () => {
     describe('Get', () => {
         it('should get user by id', async () => {
-            const mockUser = database.get({deleted: false});
-            const user = await service.get({id: mockUser._id}) as any;
-            expect(user).to.be.an('object');
-            expect(user).to.have.keys([
-                'id',
-                'email',
-                'firstName',
-                'lastName',
-                'username',
-                'createdAt',
-                'updatedAt',
-                'deletedAt',
-                'deleted',
-                'role',
-                'lastLogin',
-                'gender',
-                'active',
-                'birthday',
-                'groups'
-            ]);
+            try {
+                const mockUser = database.get({ deleted: false });
+                const user = await service.get({ id: mockUser._id }) as any;
+                expect(user).to.be.an('object');
+                expect(user).to.have.keys([
+                    'id',
+                    'email',
+                    'firstName',
+                    'lastName',
+                    'username',
+                    'createdAt',
+                    'updatedAt',
+                    'deletedAt',
+                    'deleted',
+                    'role',
+                    'lastLogin',
+                    'gender',
+                    'active',
+                    'birthday'
+                ]);
 
-            expect(user.id).to.be.eq(mockUser._id);
-            expect(user.email).to.be.eq(mockUser.email);
-            expect(user.firstName).to.be.eq(mockUser.firstName);
-            expect(user.lastName).to.be.eq(mockUser.lastName);
-            expect(user.username).to.be.eq(mockUser.username);
+                expect(user.id).to.be.eq(mockUser._id);
+                expect(user.email).to.be.eq(mockUser.email);
+                expect(user.firstName).to.be.eq(mockUser.firstName);
+                expect(user.lastName).to.be.eq(mockUser.lastName);
+                expect(user.username).to.be.eq(mockUser.username);
 
-            const createdAt = new Date(mockUser.createdAt);
-            expect(user.createdAt.getFullYear()).to.be.eq(createdAt.getFullYear());
-            expect(user.createdAt.getMonth()).to.be.eq(createdAt.getMonth());
-            expect(user.createdAt.getDay()).to.be.eq(createdAt.getDay());
+                const createdAt = new Date(mockUser.createdAt);
+                expect(user.createdAt.getFullYear()).to.be.eq(createdAt.getFullYear());
+                expect(user.createdAt.getMonth()).to.be.eq(createdAt.getMonth());
+                expect(user.createdAt.getDay()).to.be.eq(createdAt.getDay());
 
-            const updatedAt = new Date(mockUser.updatedAt);
-            expect(user.updatedAt.getFullYear()).to.be.eq(updatedAt.getFullYear());
-            expect(user.updatedAt.getMonth()).to.be.eq(updatedAt.getMonth());
-            expect(user.updatedAt.getDay()).to.be.eq(updatedAt.getDay());
+                const updatedAt = new Date(mockUser.updatedAt);
+                expect(user.updatedAt.getFullYear()).to.be.eq(updatedAt.getFullYear());
+                expect(user.updatedAt.getMonth()).to.be.eq(updatedAt.getMonth());
+                expect(user.updatedAt.getDay()).to.be.eq(updatedAt.getDay());
 
-            if (mockUser.deletedAt) {
-                const deletedAt = new Date(mockUser.deletedAt);
-                expect(user.deletedAt.getFullYear()).to.be.eq(deletedAt.getFullYear());
-                expect(user.deletedAt.getMonth()).to.be.eq(deletedAt.getMonth());
-                expect(user.deletedAt.getDay()).to.be.eq(deletedAt.getDay());
-            } else {
-                expect(user.deletedAt).to.be.eq(null);
+                if (mockUser.deletedAt) {
+                    const deletedAt = new Date(mockUser.deletedAt);
+                    expect(user.deletedAt.getFullYear()).to.be.eq(deletedAt.getFullYear());
+                    expect(user.deletedAt.getMonth()).to.be.eq(deletedAt.getMonth());
+                    expect(user.deletedAt.getDay()).to.be.eq(deletedAt.getDay());
+                } else {
+                    expect(user.deletedAt).to.be.eq(null);
+                }
+                expect(user.deleted).to.be.eq(mockUser.deleted);
+                expect(user.role).to.be.eq(mockUser.role);
+                if (mockUser.lastLogin) {
+                    const lastLogin = new Date(mockUser.lastLogin);
+                    expect(user.lastLogin.getFullYear()).to.be.eq(lastLogin.getFullYear());
+                    expect(user.lastLogin.getMonth()).to.be.eq(lastLogin.getMonth());
+                    expect(user.lastLogin.getDay()).to.be.eq(lastLogin.getDay());
+                } else {
+                    expect(user.lastLogin).to.be.eq(null);
+                }
+                expect(user.gender).to.be.eq(mockUser.gender);
+                expect(user.active).to.be.eq(mockUser.active);
+                if (mockUser.birthday) {
+                    const birthday = new Date(mockUser.birthday);
+                    expect(user.birthday.getFullYear()).to.be.eq(birthday.getFullYear());
+                    expect(user.birthday.getMonth()).to.be.eq(birthday.getMonth());
+                    expect(user.birthday.getDay()).to.be.eq(birthday.getDay());
+                } else {
+                    expect(user.birthday).to.be.eq(null);
+                }
+            } catch (e) {
+                console.log(e);
+                throw e;
             }
-            expect(user.deleted).to.be.eq(mockUser.deleted);
-            expect(user.role).to.be.eq(mockUser.role);
-            if (mockUser.lastLogin) {
-                const lastLogin = new Date(mockUser.lastLogin);
-                expect(user.lastLogin.getFullYear()).to.be.eq(lastLogin.getFullYear());
-                expect(user.lastLogin.getMonth()).to.be.eq(lastLogin.getMonth());
-                expect(user.lastLogin.getDay()).to.be.eq(lastLogin.getDay());
-            } else {
-                expect(user.lastLogin).to.be.eq(null);
-            }
-            expect(user.gender).to.be.eq(mockUser.gender);
-            expect(user.active).to.be.eq(mockUser.active);
-            if (mockUser.birthday) {
-                const birthday = new Date(mockUser.birthday);
-                expect(user.birthday.getFullYear()).to.be.eq(birthday.getFullYear());
-                expect(user.birthday.getMonth()).to.be.eq(birthday.getMonth());
-                expect(user.birthday.getDay()).to.be.eq(birthday.getDay());
-            } else {
-                expect(user.birthday).to.be.eq(null);
-            }
-            expect(user.groups).to.be.deep.eq(mockUser.groups);
         });
 
         it('should get user by email', async () => {
-            const mockUser = database.get({deleted: false});
-            const user = await service.get({email: mockUser.email}) as any;
+            const mockUser = database.get({ deleted: false });
+            const user = await service.get({ email: mockUser.email }) as any;
             expect(user).to.be.an('object');
             expect(user).to.have.keys([
                 'id',
@@ -129,8 +132,7 @@ describe('E2E', async () => {
                 'lastLogin',
                 'gender',
                 'active',
-                'birthday',
-                'groups'
+                'birthday'
             ]);
 
             expect(user.id).to.be.eq(mockUser._id);
@@ -177,12 +179,11 @@ describe('E2E', async () => {
             } else {
                 expect(user.birthday).to.be.eq(null);
             }
-            expect(user.groups).to.be.deep.eq(mockUser.groups);
         });
 
         it('should get user by username', async () => {
-            const mockUser = database.get({deleted: false});
-            const user = await service.get({username: mockUser.username}) as any;
+            const mockUser = database.get({ deleted: false });
+            const user = await service.get({ username: mockUser.username }) as any;
             expect(user).to.be.an('object');
             expect(user).to.have.keys([
                 'id',
@@ -198,8 +199,7 @@ describe('E2E', async () => {
                 'lastLogin',
                 'gender',
                 'active',
-                'birthday',
-                'groups'
+                'birthday'
             ]);
 
             expect(user.id).to.be.eq(mockUser._id);
@@ -246,18 +246,17 @@ describe('E2E', async () => {
             } else {
                 expect(user.birthday).to.be.eq(null);
             }
-            expect(user.groups).to.be.deep.eq(mockUser.groups);
         });
 
         it('should return null for deleted user', async () => {
-            const mockUser = database.get({deleted: true});
-            const user = await service.get({id: mockUser._id}) as any;
+            const mockUser = database.get({ deleted: true });
+            const user = await service.get({ id: mockUser._id }) as any;
             expect(user).to.be.eq(null);
         });
 
         it('should return user with partial fields', async () => {
-            const mockUser = database.get({deleted: false});
-            const user = await service.get({id: mockUser._id}, ['_id', 'active', 'role']) as any;
+            const mockUser = database.get({ deleted: false });
+            const user = await service.get({ id: mockUser._id }, ['_id', 'active', 'role']) as any;
             expect(user).to.be.an('object');
             expect(user).to.have.keys(['id', 'active', 'role']);
             expect(user.id).to.be.eq(mockUser._id);
@@ -266,8 +265,8 @@ describe('E2E', async () => {
         });
 
         it('should return inactive user', async () => {
-            const mockUser = database.get({deleted: false, active: false});
-            const user = await service.get({id: mockUser._id}, ['_id', 'active']) as any;
+            const mockUser = database.get({ deleted: false, active: false });
+            const user = await service.get({ id: mockUser._id }, ['_id', 'active']) as any;
             expect(user).to.be.an('object');
             expect(user).to.have.keys(['id', 'active']);
             expect(user.id).to.be.eq(mockUser._id);
@@ -277,61 +276,62 @@ describe('E2E', async () => {
 
     describe('Create', () => {
         it('should create user', async () => {
-
-            const createUser = async (data: ICreateInputModel) => {
-                const user = await service.create(data);
-                expect(user).to.be.an('object');
-                expect(user).to.have.keys(['id', 'email', 'firstName', 'lastName', 'username', 'createdAt',
-                    'updatedAt', 'deletedAt', 'deleted', 'role', 'lastLogin', 'gender', 'active', 'birthday', 'groups']);
-                // Must data
-                expect(user.email).to.be.eq(data.email);
-                expect(user.firstName).to.be.eq(data.firstName);
-                expect(user.lastName).to.be.eq(data.lastName);
-                expect(user.role).to.be.eq(data.role);
-                // Optional
-                if (data.gender) {
-                    expect(user.gender).to.be.eq(data.gender);
-                } else {
-                    expect(user.gender).to.be.eq(Gender.UNKNOWN);
+            try {
+                const createUser = async (data: ICreateInputModel) => {
+                    const user = await service.create(data);
+                    expect(user).to.be.an('object');
+                    expect(user).to.have.keys(['id', 'email', 'firstName', 'lastName', 'username', 'createdAt',
+                        'updatedAt', 'deletedAt', 'deleted', 'role', 'lastLogin', 'gender', 'active', 'birthday']);
+                    // Must data
+                    expect(user.email).to.be.eq(data.email);
+                    expect(user.firstName).to.be.eq(data.firstName);
+                    expect(user.lastName).to.be.eq(data.lastName);
+                    expect(user.role).to.be.eq(data.role);
+                    // Optional
+                    if (data.gender) {
+                        expect(user.gender).to.be.eq(data.gender);
+                    } else {
+                        expect(user.gender).to.be.eq(Gender.UNKNOWN);
+                    }
+                    if (data.username) {
+                        expect(user.username).to.be.eq(data.username);
+                    } else {
+                        expect(user.username).to.be.a('string');
+                    }
+                    if (data.active !== undefined) {
+                        expect(user.active).to.be.eq(data.active);
+                    } else {
+                        expect(user.active).to.be.eq(true);
+                    }
+                    if (data.birthday) {
+                        expect(user.birthday).to.be.a('date');
+                        const birthday = user.birthday as Date;
+                        expect(birthday.toJSON()).to.be.eq(new Date(data.birthday).toJSON());
+                    } else {
+                        expect(user.birthday).to.be.eq(null);
+                    }
+    
+                    expect(user.createdAt).to.be.a('date');
+                    expect(user.updatedAt).to.be.a('date');
+                    expect(user.deletedAt).to.be.eq(null);
+                    expect(user.deleted).to.be.eq(false);
+                    expect(user.id).to.be.a('string');
+                    expect(user.id).to.have.lengthOf(24);
+                    expect(user.lastLogin).to.be.eq(null);
                 }
-                if (data.username) {
-                    expect(user.username).to.be.eq(data.username);
-                } else {
-                    expect(user.username).to.be.a('string');
+                const inputs = createInputData.multiple(10);
+                for (const data of inputs) {
+                    await createUser(data);
                 }
-                if (data.active !== undefined) {
-                    expect(user.active).to.be.eq(data.active);
-                } else {
-                    expect(user.active).to.be.eq(true);
-                }
-                if (data.birthday) {
-                    expect(user.birthday).to.be.a('date');
-                    const birthday = user.birthday as Date;
-                    expect(birthday.toJSON()).to.be.eq(new Date(data.birthday).toJSON());
-                } else {
-                    expect(user.birthday).to.be.eq(null);
-                }
-                // Default
-                expect(user.groups).to.be.an('array');
-                expect(user.groups).to.have.lengthOf(0);
-                
-                expect(user.createdAt).to.be.a('date');
-                expect(user.updatedAt).to.be.a('date');
-                expect(user.deletedAt).to.be.eq(null);
-                expect(user.deleted).to.be.eq(false);
-                expect(user.id).to.be.a('string');
-                expect(user.id).to.have.lengthOf(24);
-                expect(user.lastLogin).to.be.eq(null);
-            }
-            const inputs = createInputData.multiple(10);
-            for (const data of inputs) {
-                await createUser(data);
+            } catch (e) {
+                console.log(e);
+                throw e;
             }
         }).timeout(5000);
 
         it('should raise EmailAlreadyExists', async () => {
             try {
-                const user = database.get({deleted: false});
+                const user = database.get({ deleted: false });
                 const createData: ICreateInputModel = {
                     email: user.email,
                     firstName: user.firstName,
@@ -349,7 +349,7 @@ describe('E2E', async () => {
 
         it('should raise UserNameExists', async () => {
             try {
-                const user = database.get({deleted: false});
+                const user = database.get({ deleted: false });
                 const createData: ICreateInputModel = {
                     email: 'mail@mail.com',
                     firstName: user.firstName,
@@ -373,8 +373,8 @@ describe('E2E', async () => {
                 const updated = await service.update(user._id, data);
                 expect(updated).to.be.an('object');
                 expect(updated).to.have.keys(['id', 'email', 'firstName', 'lastName', 'username', 'createdAt',
-                    'updatedAt', 'deletedAt', 'deleted', 'role', 'lastLogin', 'gender', 'active', 'birthday', 'groups']);
-                
+                    'updatedAt', 'deletedAt', 'deleted', 'role', 'lastLogin', 'gender', 'active', 'birthday']);
+
                 if (data.firstName) {
                     expect(updated.firstName).to.be.eq(data.firstName);
                 }
@@ -412,18 +412,18 @@ describe('E2E', async () => {
                 const createdAt = updated.createdAt as Date;
                 expect(createdAt).to.be.a('date');
                 expect(createdAt.toJSON()).to.be.eq(new Date(user.createdAt).toJSON());
-                
+
             }
             const inputs = updateInputData.multiple(10);
             for (const data of inputs) {
-                const user = database.get({deleted: false});
+                const user = database.get({ deleted: false });
                 await updateUser(user, data);
             }
         }).timeout(5000);
 
         it('should raise UserNotFound', async () => {
             try {
-                const updateData: IUpdateInputModel = {firstName: 'First Name'};
+                const updateData: IUpdateInputModel = { firstName: 'First Name' };
                 await service.update('1'.repeat(24), updateData);
                 throw new ShouldNotSucceed();
             } catch (e) {
@@ -434,7 +434,7 @@ describe('E2E', async () => {
 
         it('should raise EmailAlreadyExists', async () => {
             try {
-                const [user1, user2] = database.multiple(2, {deleted: false});
+                const [user1, user2] = database.multiple(2, { deleted: false });
                 const updateData: IUpdateInputModel = {
                     email: user2.email
                 }
@@ -448,7 +448,7 @@ describe('E2E', async () => {
 
         it('should raise UserNameExists', async () => {
             try {
-                const [user1, user2] = database.multiple(2, {deleted: false});
+                const [user1, user2] = database.multiple(2, { deleted: false });
                 const updateData: IUpdateInputModel = {
                     username: user2.username
                 }
@@ -463,8 +463,8 @@ describe('E2E', async () => {
 
     describe('Find', () => {
         it('should return deleted admins', async () => {
-            const filter: IUserFilterModel = {role: {eq: Role.ADMIN}, deleted: true};
-            const pagination: IPaginationOptions = {limit: 100};
+            const filter: IUserFilterModel = { role: { eq: Role.ADMIN }, deleted: true };
+            const pagination: IPaginationOptions = { limit: 100 };
             const mockUsers = database.filter(filter);
             const expectedResult = database.paginate(mockUsers, pagination);
             const result = await service.find(filter, userFields, pagination);
@@ -479,19 +479,18 @@ describe('E2E', async () => {
             for (const user of result.docs) {
                 expect(user).to.be.an('object');
                 expect(user).to.have.keys(['id', 'email', 'firstName', 'lastName', 'username', 'createdAt',
-                    'updatedAt', 'deletedAt', 'deleted', 'role', 'lastLogin', 'gender', 'active', 'birthday',
-                    'groups']);
+                    'updatedAt', 'deletedAt', 'deleted', 'role', 'lastLogin', 'gender', 'active', 'birthday']);
             }
             expect(result.docs.map(u => u.id).sort()).to.be.deep.eq(expectedResult.docs.map(u => u._id).sort());
         });
 
         it('should return not active female instructors', async () => {
             const filter: IUserFilterModel = {
-                role: {eq: Role.INSTRUCTOR},
-                gender: {eq: Gender.FEMALE},
+                role: { eq: Role.INSTRUCTOR },
+                gender: { eq: Gender.FEMALE },
                 active: false
             };
-            const pagination: IPaginationOptions = {limit: 100};
+            const pagination: IPaginationOptions = { limit: 100 };
             const mockUsers = database.filter(filter);
             const expectedResult = database.paginate(mockUsers, pagination);
             const result = await service.find(filter, userFields, pagination);
@@ -507,7 +506,7 @@ describe('E2E', async () => {
                 expect(user).to.be.an('object');
                 expect(user).to.have.keys(['id', 'email', 'firstName', 'lastName', 'username',
                     'createdAt', 'updatedAt', 'deletedAt', 'deleted', 'role', 'lastLogin', 'gender', 'active',
-                    'birthday', 'groups'
+                    'birthday'
                 ]);
             }
             expect(result.docs.map(u => u.id).sort()).to.be.deep.eq(expectedResult.docs.map(u => u._id).sort());
@@ -527,7 +526,7 @@ describe('E2E', async () => {
 
         it('should raise UserNotFound for deleted user', async () => {
             try {
-                const user = await database.get({deleted: true});
+                const user = await database.get({ deleted: true });
                 await service.password(user.email, user.email);
                 throw new ShouldNotSucceed();
             } catch (e) {
@@ -538,7 +537,7 @@ describe('E2E', async () => {
 
         it('should raise UserNotActive', async () => {
             try {
-                const user = await database.get({active: false, deleted: false});
+                const user = await database.get({ active: false, deleted: false });
                 await service.password(user.email, '12345678');
                 throw new ShouldNotSucceed();
             } catch (e) {
@@ -548,13 +547,13 @@ describe('E2E', async () => {
         });
 
         it('should return true', async () => {
-            const user = await database.get({active: true, deleted: false});
+            const user = await database.get({ active: true, deleted: false });
             const valid = await service.password(user.email, user.email);
             expect(valid).to.be.eq(true);
         });
 
         it('should return false', async () => {
-            const user = await database.get({active: true, deleted: false});
+            const user = await database.get({ active: true, deleted: false });
             const valid = await service.password(user.email, '12345678');
             expect(valid).to.be.eq(false);
         });
