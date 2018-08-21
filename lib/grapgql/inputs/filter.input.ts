@@ -72,16 +72,8 @@ export class FilterInput extends Validatable implements IUserFilterModel {
     @IsCompareDateInput()
     public birthday?: CompareNullableDateInput;
 
-    /**
-     * Get users base on given groups
-     */
-    @ValidateIf(((object, value) => value !== undefined))
-    @IsArray()
-    @Length(24, 24, {each: true})
-    public groups?: string[];
-
     constructor(data: IUserFilterModel) {
         super(data, ['active', 'gender', 'role', 'deleted', 'deletedAt', 'createdAt',
-            'updatedAt', 'lastLogin', 'birthday', 'groups']);
+            'updatedAt', 'lastLogin', 'birthday']);
     }
 }

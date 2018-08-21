@@ -167,10 +167,6 @@ export class Database extends DataSource {
             if (filters.lastLogin !== undefined) {
                 data = this.compare(data, 'lastLogin', filters.lastLogin);
             }
-            if (filters.groups && filters.groups.length > 0) {
-                const groups = filters.groups;
-                data = data.filter(u => u.groups.some(id => groups.indexOf(id) > 0));
-            }
             return data;
         } catch (e) {
             console.error('User filtering failed', e, {filters});

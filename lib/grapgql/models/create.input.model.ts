@@ -11,5 +11,4 @@ export interface ICreateInputModel {
     active?: boolean;
     gender?: Gender;
     birthday?: Date | string;
-    groups?: string[];
 }

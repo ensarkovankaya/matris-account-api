@@ -310,37 +310,4 @@ describe('GraphQL -> Inputs -> FilterInput', () => {
             }
         });
     });
-
-    describe('groups', () => {
-        it('should valid for groups', async () => {
-            await new FilterInput({groups: []}).validate();
-            await new FilterInput({groups: ['1'.repeat(24)]}).validate();
-        });
-
-        it('should raise validation error for groups', async () => {
-            try {
-                await new FilterInput({groups: 'a'} as any).validate();
-                throw new ShouldNotSucceed();
-            } catch (e) {
-                expect(e.name).to.be.eq('ArgumentValidationError');
-                expect(e.hasError('groups')).to.be.eq(true);
-            }
-
-            try {
-                await new FilterInput({groups: ['shortid']} as any).validate();
-                throw new ShouldNotSucceed();
-            } catch (e) {
-                expect(e.name).to.be.eq('ArgumentValidationError');
-                expect(e.hasError('groups')).to.be.eq(true);
-            }
-
-            try {
-                await new FilterInput({groups: ['longid'.repeat(10)]} as any).validate();
-                throw new ShouldNotSucceed();
-            } catch (e) {
-                expect(e.name).to.be.eq('ArgumentValidationError');
-                expect(e.hasError('groups')).to.be.eq(true);
-            }
-        });
-    });
 });

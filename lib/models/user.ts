@@ -78,14 +78,9 @@ export class UserSchema extends Validatable implements Partial<IUser> {
     @IsDate()
     public lastLogin?: Date | null;
 
-    @ValidateIf(((object, value) => value !== undefined))
-    @IsArray()
-    @Length(24, 24, {message: 'InvalidIDLength', each: true})
-    public groups?: string[];
-
     constructor(data: Partial<IUser>) {
         super(data, ['id', 'username', 'email', 'firstName', 'lastName', 'role', 'gender', 'birthday',
-             'active', 'createdAt', 'updatedAt', 'deletedAt', 'deleted', 'lastLogin', 'groups']);
+             'active', 'createdAt', 'updatedAt', 'deletedAt', 'deleted', 'lastLogin']);
     }
 
     public toJSON(): Partial<IUserModel> {

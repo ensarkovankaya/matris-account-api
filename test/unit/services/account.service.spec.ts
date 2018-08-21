@@ -141,7 +141,6 @@ describe('GraphQL -> Services -> AccountService', async () => {
             expect(user.email).to.be.eq(mockUser.email);
             expect(user.firstName).to.be.eq(mockUser.firstName);
             expect(user.lastName).to.be.eq(mockUser.lastName);
-            expect(user.groups).to.be.deep.eq(mockUser.groups);
             if (mockUser.lastLogin !== null) {
                 expect(user.lastLogin).to.be.a('date');
             } else {
@@ -520,8 +519,7 @@ describe('GraphQL -> Services -> AccountService', async () => {
                     username: 'USERNAME',
                     active: 'a',
                     gender: 'b',
-                    birthday: 'asd',
-                    groups: [123]
+                    birthday: 'asd'
                 } as any);
                 throw new ShouldNotSucceed();
             } catch (e) {
@@ -535,7 +533,6 @@ describe('GraphQL -> Services -> AccountService', async () => {
                 expect(e.hasError('active')).to.be.eq(true);
                 expect(e.hasError('gender')).to.be.eq(true);
                 expect(e.hasError('birthday')).to.be.eq(true);
-                expect(e.hasError('groups')).to.be.eq(true);
             }
         });
 

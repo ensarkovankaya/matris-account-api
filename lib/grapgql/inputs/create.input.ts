@@ -55,13 +55,8 @@ export class CreateInput extends Validatable {
     @IsInDateRange(new Date(1950, 1, 1), new Date(2000, 12, 31))
     public birthday?: Date | string | null;
 
-    @ValidateIf(((object, value) => value !== undefined))
-    @IsArray()
-    @Length(24, 24, {message: 'InvalidIDLength', each: true})
-    public groups?: string[];
-
     constructor(data: ICreateInputModel) {
         super(data, ['email', 'firstName', 'lastName', 'role',
-            'password', 'username', 'active', 'gender', 'birthday', 'groups']);
+            'password', 'username', 'active', 'gender', 'birthday']);
     }
 }

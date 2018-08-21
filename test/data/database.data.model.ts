@@ -16,5 +16,4 @@ export interface IDBUserModel {
     deletedAt: string | null;
     deleted: boolean;
     lastLogin: string | null;
-    groups: string[];
 }

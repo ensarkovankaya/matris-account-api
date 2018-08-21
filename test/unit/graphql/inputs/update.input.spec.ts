@@ -320,38 +320,6 @@ describe('GraphQL -> Inputs -> UpdateInput', () => {
         });
     });
 
-    describe('Groups', () => {
-        it('should be valid', async () => {
-            const input1 = new UpdateInput({groups: []});
-            expect(input1.groups).to.be.an('array');
-            expect(input1.groups).to.have.lengthOf(0);
-            await input1.validate();
-
-            const input2 = new UpdateInput({groups: ['i'.repeat(24)]});
-            expect(input2.groups).to.be.an('array');
-            expect(input2.groups).to.have.lengthOf(1);
-            await input2.validate();
-        });
-
-        it('should raise ValidationError', async () => {
-            try {
-                await new UpdateInput({groups: 'asd'} as any).validate();
-                throw new ShouldNotSucceed();
-            } catch (e) {
-                expect(e.name).to.be.eq('ArgumentValidationError');
-                expect(e.hasError('groups', 'isArray')).to.be.eq(true);
-            }
-
-            try {
-                await new UpdateInput({groups: ['id']}).validate();
-                throw new ShouldNotSucceed();
-            } catch (e) {
-                expect(e.name).to.be.eq('ArgumentValidationError');
-                expect(e.hasError('groups', 'length')).to.be.eq(true);
-            }
-        });
-    });
-
     describe('UpdateLastLogin', () => {
         it('should be valid', async () => {
             const input1 = new UpdateInput({updateLastLogin: true});

@@ -29,7 +29,6 @@ describe('Data -> Database', () => {
         expect(user.firstName).to.be.a('string');
         expect(user.gender).to.be.oneOf(['MALE', 'FEMALE', 'UNKNOWN']);
         expect(user.role).to.be.oneOf(['ADMIN', 'MANAGER', 'INSTRUCTOR', 'PARENT', 'STUDENT']);
-        expect(user.groups).to.be.an('array');
         expect(user.deleted).to.be.a('boolean');
         expect(user.active).to.be.a('boolean');
         expect(user.updatedAt).to.be.a('string');
@@ -54,7 +53,6 @@ describe('Data -> Database', () => {
         expect(user.firstName).to.be.a('string');
         expect(user.gender).to.be.eq('MALE');
         expect(user.role).to.be.eq('ADMIN');
-        expect(user.groups).to.be.an('array');
         expect(user.deleted).to.be.a('boolean');
         expect(user.active).to.be.a('boolean');
         expect(user.updatedAt).to.be.a('string');

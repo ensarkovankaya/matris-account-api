@@ -16,7 +16,6 @@ export interface IUserModel {
     deletedAt: string | null;
     deleted: boolean;
     lastLogin: string | null;
-    groups: string[];
 }
 
 export interface IUser {
@@ -34,7 +33,6 @@ export interface IUser {
     deletedAt: Date | null;
     deleted: boolean;
     lastLogin: Date | null;
-    groups: string[];
 }
 
 export type UserField =
@@ -51,8 +49,7 @@ export type UserField =
     | 'updatedAt'
     | 'deletedAt'
     | 'deleted'
-    | 'lastLogin'
-    | 'groups';
+    | 'lastLogin';
 
 export const userFields: UserField[] = [
     '_id',
@@ -68,6 +65,5 @@ export const userFields: UserField[] = [
     'updatedAt',
     'deletedAt',
     'deleted',
-    'lastLogin',
-    'groups'
+    'lastLogin'
 ];
